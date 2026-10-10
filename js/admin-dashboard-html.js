@@ -1,4 +1,4 @@
-import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-8";
+import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-9";
 (function () {
   "use strict";
   const sections = [
@@ -98,7 +98,7 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
     if(id==="advanced")return loadAdvanced();
     if(id==="bank-transfers"){
       main.innerHTML=card("Bank Transfer Notifications","<p>Loading parent-submitted transfer notifications…</p>");
-      try{const mod=await import("/js/bank-transfer-admin.js?v=20261010-school-upgrade-8");await mod.renderBankTransferNotifications(main,{api:async(path,options={})=>request(path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}}),esc,table:(headers,rows)=>'<div class="portal-table-wrap"><table class="data-table"><thead><tr>'+headers.map(h=>"<th>"+esc(h)+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table></div>",pill:s=>'<span class="pill pill-'+String(s||"").toLowerCase().replace(/[^a-z0-9-]/g,"-")+'">'+esc(s||"—")+'</span>',toast:(message,type="info")=>alertAction(message,{title:"Bank Transfer Notifications",danger:type==="error",confirmText:"Done"})});}
+      try{const mod=await import("/js/bank-transfer-admin.js?v=20261010-school-upgrade-9");await mod.renderBankTransferNotifications(main,{api:async(path,options={})=>request(path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}}),esc,table:(headers,rows)=>'<div class="portal-table-wrap"><table class="data-table"><thead><tr>'+headers.map(h=>"<th>"+esc(h)+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table></div>",pill:s=>'<span class="pill pill-'+String(s||"").toLowerCase().replace(/[^a-z0-9-]/g,"-")+'">'+esc(s||"—")+'</span>',toast:(message,type="info")=>alertAction(message,{title:"Bank Transfer Notifications",danger:type==="error",confirmText:"Done"})});}
       catch(e){main.innerHTML=card("Bank Transfer Notifications",'<div class="portal-error"><p>'+esc(e.message||"Could not load transfer notifications.")+'</p><button class="btn navy-btn" id="retry-bank-transfers">Try again</button></div>');document.getElementById("retry-bank-transfers").onclick=()=>openSection("bank-transfers")}return;
     }
     if(id==="settings"){main.innerHTML=card("Settings",'<h3>Security</h3><p>Admin credentials are verified server-side and must never be placed in browser code.</p><h3>Database</h3><p>Database operations use protected API endpoints.</p><button class="btn navy-btn" id="settings-refresh">Refresh overview</button>');document.getElementById("settings-refresh").onclick=()=>openSection("overview");return}
