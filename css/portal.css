@@ -205,3 +205,9 @@ button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
 .portal-page .result-filters input[name=session],.portal-page input[name=session],.portal-page select[name=session]{min-height:48px!important;background:#fff!important;color:#172033!important;border:2px solid #2563eb!important;border-radius:10px!important;box-shadow:0 0 0 3px rgba(37,99,235,.10)!important;font-weight:650}
 .portal-page .report-actions .btn{background:#1d4ed8!important;color:#fff!important;border-color:#1d4ed8!important}
 @media print{@page{size:A4 portrait;margin:12mm}.report-wrap{width:186mm!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}.report-summary,.score-summary{display:flex!important;flex-direction:column!important;gap:7px!important}.report-summary>div,.score-summary>div{width:100%!important;break-inside:avoid!important;background:#fff!important;color:#111!important}}
+
+/* Give utility buttons the same clear contrast as primary controls. */
+.portal-page button:not(.btn):not(.admin-tab):not(.teacher-tab):not(.student-tab):not([data-dialog-cancel]):not([data-dialog-confirm]){
+  background:#e8f0ff!important;color:#17375e!important;border:1px solid #8db5ff!important;opacity:1!important;
+}
+.portal-page .icon-btn,.portal-page .portal-show{background:#e8f0ff!important;color:#17375e!important;border:1px solid #8db5ff!important}
