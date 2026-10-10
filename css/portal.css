@@ -191,3 +191,17 @@ button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
 
 /* Keep total score first and percentage score directly underneath on printed reports. */
 .report-summary>div,.score-summary>div{width:100%;box-sizing:border-box;break-inside:avoid}
+
+
+/* Accessibility pass: crisp, colored and easy-to-find portal controls. */
+.portal-page button,.portal-page .btn,.portal-page a.btn,.portal-page input[type=button],.portal-page input[type=submit]{filter:none!important;opacity:1!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important;visibility:visible!important;font-weight:750!important;min-height:42px}
+.portal-page .btn:not(.btn-outline-light):not(.btn-outline):not(.danger-btn):not(.btn-danger):not(.btn-gold){background:#1d4ed8!important;color:#fff!important;border:1px solid #1d4ed8!important}
+.portal-page .btn-outline,.portal-page a.btn-outline{background:#e8f0ff!important;color:#17375e!important;border:1px solid #8db5ff!important}
+.portal-page .btn-outline-light{background:#fff!important;color:#17375e!important;border:1px solid #dbeafe!important}
+.portal-page .danger-btn,.portal-page .btn-danger{background:#b91c1c!important;color:#fff!important;border:1px solid #b91c1c!important}
+.portal-page .btn-gold{background:#f4c542!important;color:#172033!important;border:1px solid #d6a72c!important}
+.portal-page .admin-sidebar button,.portal-page .admin-tab,.portal-page .teacher-tab,.portal-page .student-tab,.portal-page .portal-static-sidebar button,.portal-page .portal-mobile-nav button{background:#eaf1ff!important;color:#17375e!important;border:1px solid #c7d9ff!important;opacity:1!important}
+.portal-page .admin-sidebar button.active,.portal-page .admin-tab.active,.portal-page .teacher-tab.active,.portal-page .student-tab.active,.portal-page .portal-static-sidebar button.active,.portal-page .portal-mobile-nav button.active{background:#17375e!important;color:#fff!important;border-color:#17375e!important}
+.portal-page .result-filters input[name=session],.portal-page input[name=session],.portal-page select[name=session]{min-height:48px!important;background:#fff!important;color:#172033!important;border:2px solid #2563eb!important;border-radius:10px!important;box-shadow:0 0 0 3px rgba(37,99,235,.10)!important;font-weight:650}
+.portal-page .report-actions .btn{background:#1d4ed8!important;color:#fff!important;border-color:#1d4ed8!important}
+@media print{@page{size:A4 portrait;margin:12mm}.report-wrap{width:186mm!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}.report-summary,.score-summary{display:flex!important;flex-direction:column!important;gap:7px!important}.report-summary>div,.score-summary>div{width:100%!important;break-inside:avoid!important;background:#fff!important;color:#111!important}}
