@@ -166,3 +166,6 @@
  .admin-chat-compose{grid-template-columns:minmax(0,1fr)}
  .admin-chat-compose button{width:100%}
 }
+
+/* Shared custom confirmation, prompt and notification dialogs for every portal. */
+.dbms-dialog-icon.is-info{background:#eaf1ff;color:#17375e}.dbms-dialog-actions [data-dialog-confirm]{min-width:100px}.dbms-dialog-input{min-height:46px}.dbms-dialog-backdrop{z-index:20000}
