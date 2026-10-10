@@ -132,7 +132,7 @@ function report(rows,s){const total=rows.reduce((a,x)=>a+Number(x.total_score||0
 async function downloadPdf(){const el=document.querySelector("#report-card");if(!el)return;try{await load("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js","html2canvas");await load("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js","jspdf");const canvas=await window.html2canvas(el,{scale:2,backgroundColor:"#fff",useCORS:true}),{jsPDF}=window.jspdf,pdf=new jsPDF("p","mm","a4"),w=210,page=297,h=canvas.height*w/canvas.width;let left=h,y=0,img=canvas.toDataURL("image/png");pdf.addImage(img,"PNG",0,y,w,h);left-=page;while(left>0){y-=page;pdf.addPage();pdf.addImage(img,"PNG",0,y,w,h);left-=page}pdf.save("D-Blossom-Result.pdf")}catch(e){toast("PDF could not be generated. Please try again.","error")}}
 const load=(src,key)=>new Promise((ok,no)=>{if(window[key])return ok();const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)});
 
-async function teacherDashboard(){const{renderTeacherPortal}=await import("./teacher-portal.js?v=20261010-school-upgrade-13");await renderTeacherPortal(dashboardView,shell)}
+async function teacherDashboard(){const{renderTeacherPortal}=await import("./teacher-portal.js?v=20261010-school-upgrade-14");await renderTeacherPortal(dashboardView,shell)}
 
 async function adminDashboard(){
  const existingPanel=document.querySelector("#admin-panel");
