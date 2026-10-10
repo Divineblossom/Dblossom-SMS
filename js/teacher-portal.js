@@ -1,6 +1,6 @@
 import{getSession,esc,getSupabase}from"./supabase.js";
-import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-school-upgrade-5";
-import{confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-5";
+import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-school-upgrade-9";
+import{confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-9";
 const TERMS=["First Term","Second Term","Third Term"];
 const api=async(path,options={})=>{const s=await getSession();if(!s)throw Error("Your session has expired.");const r=await fetch(path,{...options,headers:{Authorization:"Bearer "+s.access_token,"content-type":"application/json",...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed.");return d};
 const toast=(m,t="info")=>{const e=document.createElement("div");e.className="toast";e.dataset.type=t;e.textContent=m;document.body.append(e);setTimeout(()=>e.remove(),3000)};
