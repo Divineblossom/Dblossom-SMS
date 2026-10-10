@@ -1,4 +1,4 @@
-import{alertAction}from"./portal-dialogs.js?v=20261010-school-upgrade-3";
-import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-school-upgrade-3";
+import{alertAction}from"./portal-dialogs.js?v=20261010-school-upgrade-9";
+import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-school-upgrade-9";
 const button=document.querySelector("#enable-browser-notifications");
 if(button)button.addEventListener("click",async()=>{const old=button.textContent;button.disabled=true;button.textContent="Enabling…";try{await enableBrowserNotifications("admin");button.textContent="✓ Notifications enabled";const note=document.createElement("div");note.className="portal-push-toast";note.textContent="Browser notifications are enabled on this device.";document.body.append(note);setTimeout(()=>note.remove(),4500)}catch(e){button.textContent=old;alertAction(e.message,{title:"Notifications could not be enabled",danger:true,confirmText:"Got it"})}finally{button.disabled=false}});
