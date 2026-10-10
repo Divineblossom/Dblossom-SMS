@@ -1,4 +1,4 @@
-import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-3";
+import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-school-upgrade-4";
 (function () {
   "use strict";
   const sections = [
