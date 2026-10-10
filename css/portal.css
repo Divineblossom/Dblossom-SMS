@@ -169,3 +169,20 @@
 
 /* Shared custom confirmation, prompt and notification dialogs for every portal. */
 .dbms-dialog-icon.is-info{background:#eaf1ff;color:#17375e}.dbms-dialog-actions [data-dialog-confirm]{min-width:100px}.dbms-dialog-input{min-height:46px}.dbms-dialog-backdrop{z-index:20000}
+
+
+/* School upgrade: sharp, high-contrast controls and print-ready A4 results. */
+button,.btn,.icon-btn,.admin-tab,.teacher-tab{filter:none!important;opacity:1!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important;box-shadow:0 2px 5px rgba(15,23,42,.08);font-weight:750!important;visibility:visible!important}
+button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
+.btn,.icon-btn,.admin-tab,.teacher-tab{transition:background-color .15s ease,border-color .15s ease,color .15s ease}
+.btn:focus-visible,button:focus-visible,a.btn:focus-visible{outline:3px solid #f4c542!important;outline-offset:3px!important}
+.result-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));align-items:end;gap:12px}
+.result-filters>.btn{min-height:46px;white-space:normal}
+.report-wrap{box-sizing:border-box;width:100%;max-width:210mm;margin:16px auto;background:#fff;color:#111;padding:12mm;border:1px solid #d9e0e8;border-radius:8px;box-shadow:0 8px 28px rgba(15,23,42,.1)}
+.report-summary{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+.report-summary>div{flex:1 1 130px;min-width:0;background:#f8fafc;border:1px solid #dbe4ef;border-radius:9px;padding:12px}
+.report-summary small{display:block;color:#475569;font-size:12px;font-weight:700;margin-bottom:5px}
+.report-summary strong{font-size:21px;color:#17375e}
+@page{size:A4 portrait;margin:12mm}
+@media print{body{background:#fff!important}.report-actions,.portal-static-header,.portal-static-sidebar,.portal-mobile-nav,button,.btn{display:none!important}.report-wrap{width:186mm;max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;break-inside:avoid}.report-wrap table{width:100%;border-collapse:collapse}.report-wrap th,.report-wrap td{border:1px solid #334155;padding:6px;font-size:10pt}.report-header{break-inside:avoid}.report-summary>div{background:#fff!important;color:#111!important}}
+@media(max-width:560px){.result-filters{grid-template-columns:minmax(0,1fr)}.report-wrap{padding:12px;overflow-x:auto}.report-summary>div{flex-basis:100%}}
