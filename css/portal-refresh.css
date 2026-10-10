@@ -277,3 +277,37 @@
 @media(max-width:680px){
  .admin-chat-preview .open-admin-conversation{grid-column:1/-1;width:100%;min-height:44px}
 }
+
+
+/* Focused mobile polish for parent and teacher portals; leave other portal content unchanged. */
+@media(max-width:680px){
+  body.portal-page[data-role="parent"] .portal-dashboard-body,
+  body.portal-page[data-role="teacher"] .portal-dashboard-body{width:100%;max-width:100%;padding:12px 10px calc(18px + env(safe-area-inset-bottom));}
+  body.portal-page[data-role="parent"] .portal-static-grid,
+  body.portal-page[data-role="teacher"] .portal-static-grid{display:flex;flex-direction:column;gap:12px;min-width:0;}
+  body.portal-page[data-role="parent"] .portal-static-main,
+  body.portal-page[data-role="teacher"] .portal-static-main,
+  body.portal-page[data-role="parent"] #parent-panel,
+  body.portal-page[data-role="teacher"] #teacher-panel{width:100%;max-width:100%;min-width:0;}
+  body.portal-page[data-role="parent"] .portal-head-actions,
+  body.portal-page[data-role="teacher"] .portal-head-actions{display:flex;flex-wrap:wrap;gap:8px;width:100%;}
+  body.portal-page[data-role="parent"] .portal-head-actions .btn,
+  body.portal-page[data-role="parent"] .portal-head-actions .portal-message-link,
+  body.portal-page[data-role="teacher"] .portal-head-actions .btn,
+  body.portal-page[data-role="teacher"] .portal-head-actions .portal-message-link{min-height:44px;flex:1 1 auto;justify-content:center;}
+  body.portal-page[data-role="parent"] .parent-chat-row,
+  body.portal-page[data-role="teacher"] .teacher-chat-row{display:flex;flex-direction:column;gap:10px;padding:12px 0;min-width:0;}
+  body.portal-page[data-role="parent"] .parent-chat-row>div,
+  body.portal-page[data-role="teacher"] .teacher-chat-person{width:100%;min-width:0;overflow-wrap:anywhere;}
+  body.portal-page[data-role="parent"] .parent-chat-row .btn,
+  body.portal-page[data-role="teacher"] .teacher-chat-row .btn{width:100%;min-height:46px;}
+  body.portal-page[data-role="parent"] .parent-admin-chat-preview{padding:12px;border-radius:12px;background:#f8fafc;border:1px solid var(--portal-border,#dce4ef);margin:10px 0;overflow-wrap:anywhere;}
+  body.portal-page[data-role="parent"] .parent-admin-chat-preview p{margin:0 0 6px;line-height:1.5;}
+  body.portal-page[data-role="parent"] .parent-admin-chat-preview small{color:var(--portal-muted,#64748b);}
+}
+@media(max-width:380px){
+  body.portal-page[data-role="parent"] .portal-head-actions,
+  body.portal-page[data-role="teacher"] .portal-head-actions{display:grid;grid-template-columns:minmax(0,1fr);}
+  body.portal-page[data-role="parent"] .portal-head-actions>*,
+  body.portal-page[data-role="teacher"] .portal-head-actions>*{width:100%;min-width:0;}
+}

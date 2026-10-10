@@ -65,3 +65,25 @@ body.school-messages-page{margin:0;background:var(--sm-bg);color:#172033;font-fa
  .sm-controls{grid-template-columns:1fr}
  .sm-message-list{height:calc(100dvh - 410px)}
 }
+
+
+/* Compact phone layout: reserve the screen for the active conversation and composer. */
+@media(max-width:700px){
+  .sm-header{gap:8px;min-width:0;}
+  .sm-brand{flex:1;min-width:0;}
+  .sm-brand span{max-width:none;}
+  .sm-back{flex:0 0 auto;}
+  .sm-thread{min-width:0;width:100%;}
+  .sm-thread-head>div{min-width:0;overflow-wrap:anywhere;}
+  .sm-message-list{height:clamp(220px,calc(100dvh - 320px),58dvh);min-height:220px;}
+  .sm-compose{position:sticky;bottom:0;}
+  .sm-compose textarea{max-height:120px;overflow-y:auto;}
+  .sm-compose-foot button{min-height:46px;touch-action:manipulation;}
+}
+@media(max-width:380px){
+  .sm-header{align-items:center;}
+  .sm-brand img{width:32px;height:32px;}
+  .sm-brand strong{font-size:.72rem;}
+  .sm-back{font-size:.7rem;}
+  .sm-message-list{height:clamp(200px,calc(100dvh - 350px),55dvh);}
+}
