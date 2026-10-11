@@ -137,7 +137,7 @@ exports.handler = async event => {
         db.from("student_promotions").select("student_id").eq("from_session_id",term.session_id)
       ]);
       for(const e of [resultsError,classesError,previousError])if(e)throw e;
-      const norm=s=>String(s||"").toLowerCase().replace(/\\s+/g,"");
+      const norm=s=>String(s||"").toLowerCase().replace(/\s+/g,"");
       const byName=new Map((classes||[]).map(x=>[norm(x.name),x]));
       const nextName={"primary1":"primary2","primary2":"primary3","primary3":"primary4","primary4":"primary5","primary5":"jss1","jss1":"jss2","jss2":"jss3","jss3":"ss1","ss1":"ss2","ss2":"ss3"};
       const already=new Set((previous||[]).map(x=>x.student_id));
