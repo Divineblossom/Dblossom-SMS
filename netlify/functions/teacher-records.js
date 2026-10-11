@@ -12,10 +12,13 @@ exports.handler=async event=>{try{
  const{data:assign}=await db.from("teacher_assignments").select("class_id,subject_id,classes(id,name),subjects(id,name,class_id)").eq("teacher_id",teacher.id);
  const classIds=[...new Set((assign||[]).map(x=>x.class_id).filter(Boolean))];
  if(!classIds.length){const{data:cls}=await db.from("classes").select("id,name").eq("name",teacher.assigned_class).maybeSingle();if(cls)classIds.push(cls.id)}
- if(!classIds.length)return json(403,{error:"Your teacher account is not assigned to a class. Ask the administrator to assign a class and subject."});
+ const materialOnly=String(teacher.role||"").toLowerCase().includes("materials only");
+ if(!classIds.length&&!materialOnly)return json(403,{error:"Your teacher account is not assigned to a class. Ask the administrator to assign a class and subject, or ask for Materials Upload Only access if that is your role."});
  const students=classIds.length?(await db.from("students").select("id,admission_number,full_name,guardian_name,class_id,status,classes(name)").in("class_id",classIds).order("full_name").limit(1000)).data||[]:[];
  const studentIds=students.map(x=>x.id),subjectIds=[...new Set((assign||[]).map(x=>x.subject_id).filter(Boolean))];
- let subjects=[];if(subjectIds.length)subjects=(await db.from("subjects").select("id,name,class_id").in("id",subjectIds).order("name")).data||[];if(!subjects.length&&classIds.length)subjects=(await db.from("subjects").select("id,name,class_id").in("class_id",classIds).order("name")).data||[];
+ let subjects=[],availableClasses=[];
+ if(materialOnly){const[{data:allSubjects,error:subjectError},{data:allClasses,error:classError}]=await Promise.all([db.from("subjects").select("id,name,class_id").order("name"),db.from("classes").select("id,name").eq("is_active",true).order("name")]);if(subjectError)throw subjectError;if(classError)throw classError;subjects=allSubjects||[];availableClasses=allClasses||[];}
+ else {if(subjectIds.length)subjects=(await db.from("subjects").select("id,name,class_id").in("id",subjectIds).order("name")).data||[];if(!subjects.length&&classIds.length)subjects=(await db.from("subjects").select("id,name,class_id").in("class_id",classIds).order("name")).data||[];availableClasses=(assign||[]).map(x=>Array.isArray(x.classes)?x.classes[0]:x.classes).filter(Boolean);}
  if(event.httpMethod==="GET"){
   const[{data:terms},{data:results},{data:attendance},{data:assignments},{data:materials},{data:lessons},{data:announcements},{data:messages},{data:parentLinks},{data:school}]=await Promise.all([
    db.from("terms").select("id,name,session_id,academic_sessions(name)").order("session_id"),
@@ -29,7 +32,7 @@ exports.handler=async event=>{try{
    studentIds.length?db.from("parent_student_links").select("student_id,parent_id,relationship,is_primary,parent_profiles(id,full_name,profile_id,email,phone,status)").in("student_id",studentIds):Promise.resolve({data:[]}),
    db.from("school_settings").select("school_name,logo_url,address,phone").eq("id",true).maybeSingle()
   ]);
-  return json(200,{teacher,classes:(assign||[]).map(x=>Array.isArray(x.classes)?x.classes[0]:x.classes).filter(Boolean),subjects,terms:terms||[],students:students.map(x=>({...x,class_name:(Array.isArray(x.classes)?x.classes[0]:x.classes)?.name})),results:(results||[]).map(x=>({...x,student_name:(Array.isArray(x.students)?x.students[0]:x.students)?.full_name,subject_name:x.subjects?.name,term:x.terms?.name,session:x.terms?.academic_sessions?.name})),attendance:attendance||[],assignments:(assignments||[]).map(x=>({...x,subject_name:x.subjects?.name})),materials:(materials||[]).map(x=>({...x,subject_name:x.subjects?.name})),lessons:(lessons||[]).map(x=>({...x,subject_name:x.subjects?.name})),announcements:announcements||[],messages:messages||[],parents:(parentLinks||[]).map(x=>({...x,parent:Array.isArray(x.parent_profiles)?x.parent_profiles[0]:x.parent_profiles})),school:school||{}});
+  return json(200,{teacher,classes:(assign||[]).map(x=>Array.isArray(x.classes)?x.classes[0]:x.classes).filter(Boolean),availableClasses,materialOnly,subjects,terms:terms||[],students:students.map(x=>({...x,class_name:(Array.isArray(x.classes)?x.classes[0]:x.classes)?.name})),results:(results||[]).map(x=>({...x,student_name:(Array.isArray(x.students)?x.students[0]:x.students)?.full_name,subject_name:x.subjects?.name,term:x.terms?.name,session:x.terms?.academic_sessions?.name})),attendance:attendance||[],assignments:(assignments||[]).map(x=>({...x,subject_name:x.subjects?.name})),materials:(materials||[]).map(x=>({...x,subject_name:x.subjects?.name})),lessons:(lessons||[]).map(x=>({...x,subject_name:x.subjects?.name})),announcements:announcements||[],messages:messages||[],parents:(parentLinks||[]).map(x=>({...x,parent:Array.isArray(x.parent_profiles)?x.parent_profiles[0]:x.parent_profiles})),school:school||{}});
  }
  if(event.httpMethod!=="POST")return json(405,{error:"Method Not Allowed"});
  const b=JSON.parse(event.body||"{}"),action=clean(b.action);
@@ -50,7 +53,27 @@ exports.handler=async event=>{try{
  if(action==="add-subject"){const name=clean(b.name);if(!name)return json(400,{error:"Subject name is required."});const targetClass=clean(b.class_id)||classId;if(!classIds.includes(targetClass))return json(403,{error:"You can only add subjects to your assigned class."});const{data:existing}=await db.from("subjects").select("id").eq("class_id",targetClass).ilike("name",name).maybeSingle();if(existing)return json(409,{error:"That subject already exists for this class."});const q=await db.from("subjects").insert({name,class_id:targetClass}).select("id,name,class_id").single();if(q.error)throw q.error;return json(201,{data:q.data})}
  if(action==="update-subject"){const id=clean(b.id),name=clean(b.name);if(!id||!name)return json(400,{error:"Subject and name are required."});const{data:subject}=await db.from("subjects").select("id,class_id").eq("id",id).maybeSingle();if(!subject||!classIds.includes(subject.class_id))return json(403,{error:"You can only edit subjects in your assigned class."});const{data:existing}=await db.from("subjects").select("id").eq("class_id",subject.class_id).ilike("name",name).neq("id",id).maybeSingle();if(existing)return json(409,{error:"Another subject with that name already exists."});const q=await db.from("subjects").update({name}).eq("id",id).select("id,name,class_id").single();if(q.error)throw q.error;return json(200,{data:q.data})}
  if(action==="assignment"){if(!clean(b.title)||!b.subject_id)return json(400,{error:"Title and subject are required."});const q=await db.from("assignments").insert({teacher_id:teacher.id,class_id:classId,subject_id:b.subject_id,title:clean(b.title),description:clean(b.description),due_date:b.due_date||null,max_score:Number(b.max_score||100),status:"Published"}).select().single();if(q.error)throw q.error;return json(201,{data:q.data})}
- if(action==="material"){if(!clean(b.title)||!b.subject_id||!clean(b.file_url))return json(400,{error:"Title, subject and resource URL are required."});const{data:materialSubject,error:subjectError}=await db.from("subjects").select("id,class_id").eq("id",b.subject_id).maybeSingle();if(subjectError)throw subjectError;if(!materialSubject)return json(400,{error:"Choose a valid subject."});const materialClassId=materialSubject.class_id||classId;if(!classIds.includes(materialClassId))return json(403,{error:"You can only upload materials for your assigned classes."});const q=await db.from("learning_materials").insert({teacher_id:teacher.id,class_id:materialClassId,subject_id:materialSubject.id,title:clean(b.title),description:clean(b.description),file_url:clean(b.file_url),material_type:clean(b.material_type)||"Resource"}).select().single();if(q.error)throw q.error;return json(201,{data:q.data})}
+ if(action==="material"){
+  const title=clean(b.title),fileUrl=clean(b.file_url),requestedClass=clean(b.class_id),requestedSubject=clean(b.subject_id);
+  if(!title||!fileUrl)return json(400,{error:"Title and resource URL are required."});
+  let materialClassId=classId,materialSubjectId=null;
+  if(materialOnly){
+   if(!requestedClass)return json(400,{error:"Choose the class that should receive this learning material."});
+   const{data:targetClass,error:classError}=await db.from("classes").select("id").eq("id",requestedClass).eq("is_active",true).maybeSingle();
+   if(classError)throw classError;if(!targetClass)return json(400,{error:"Choose a valid active class."});
+   materialClassId=targetClass.id;
+   if(requestedSubject){const{data:subject,error:subjectError}=await db.from("subjects").select("id,class_id").eq("id",requestedSubject).maybeSingle();if(subjectError)throw subjectError;if(!subject||subject.class_id!==materialClassId)return json(400,{error:"The selected subject does not belong to the selected class."});materialSubjectId=subject.id;}
+  }else{
+   if(!requestedSubject)return json(400,{error:"Choose a subject."});
+   const{data:materialSubject,error:subjectError}=await db.from("subjects").select("id,class_id").eq("id",requestedSubject).maybeSingle();
+   if(subjectError)throw subjectError;if(!materialSubject)return json(400,{error:"Choose a valid subject."});
+   materialClassId=materialSubject.class_id||classId;
+   if(!classIds.includes(materialClassId))return json(403,{error:"You can only upload materials for your assigned classes."});
+   materialSubjectId=materialSubject.id;
+  }
+  const q=await db.from("learning_materials").insert({teacher_id:teacher.id,class_id:materialClassId,subject_id:materialSubjectId,title,description:clean(b.description),file_url:fileUrl,material_type:clean(b.material_type)||"Resource"}).select().single();
+  if(q.error)throw q.error;return json(201,{data:q.data})
+ }
  if(action==="lesson"){if(!clean(b.title)||!b.subject_id||!b.lesson_date)return json(400,{error:"Title, subject and lesson date are required."});const q=await db.from("lesson_plans").insert({teacher_id:teacher.id,class_id:classId,subject_id:b.subject_id,title:clean(b.title),objectives:clean(b.objectives),content:clean(b.content),lesson_date:b.lesson_date}).select().single();if(q.error)throw q.error;return json(201,{data:q.data})}
  if(action==="announcement"){if(!clean(b.title)||!clean(b.body))return json(400,{error:"Title and message are required."});const q=await db.from("announcements").insert({title:clean(b.title),body:clean(b.body),posted_by:user.id,audience:"class",target_class_id:classId,status:"Published"}).select().single();if(q.error)throw q.error;return json(201,{data:q.data})}
  return json(400,{error:"Unsupported Teacher action."});
