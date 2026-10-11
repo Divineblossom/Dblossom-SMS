@@ -180,13 +180,35 @@ function studentDetailsModal(x={}){
  const body='<div class="cards three">'+
  field("Full Name",x.full_name)+field("Admission Number",x.admission_number)+field("Class",x.class_name)+
  field("Date of Birth",x.date_of_birth)+field("Gender",x.gender)+field("Status",x.status)+
- field("Parent / Guardian",x.guardian_name)+field("Guardian Contact",x.guardian_contact)+field("Parent Email",x.parent_email)+field("Login Admission Number",x.admission_number)+field("Login Password","Password is securely stored in Supabase Auth; the existing password cannot be retrieved or displayed.")+
+ field("Parent / Guardian",x.guardian_name)+field("Guardian Contact",x.guardian_contact)+field("Parent Email",x.parent_email)+field("Login Admission Number",x.admission_number)+field("Login Password","Supabase securely hides saved passwords. Use Edit Student to set or reset it; the suggested default is the first word of the student's name.")+
  field("Boarding Status",x.boarding_status)+field("Student ID",x.id)+field("Profile ID",x.profile_id)+field("Created At",x.created_at)+
  '</div><div class="form-actions"><button class="btn btn-outline" id="student-details-close">Close</button></div>';
  const m=modal("Student Details — "+(x.full_name||"Student"),body);
  m.querySelector("#student-details-close").onclick=()=>m.remove();
 }
-function studentModal(classes,x={}){const m=modal(x.id?"Edit Student":"Add Student",formHtml([input("full_name","Full Name",x.full_name||"", "text",true),input("admission_number","Admission Number",x.admission_number||"", "text",true),select("class_id","Class",classes.map(c=>({value:c.id,label:c.name})),x.class_id||"",false),input("date_of_birth","Date of Birth",x.date_of_birth||"","date"),select("gender","Gender",[{value:"Male",label:"Male"},{value:"Female",label:"Female"}],x.gender||"",true),input("guardian_name","Parent / Guardian Name",x.guardian_name||""),input("guardian_contact","Parent Phone",x.guardian_contact||""),input("parent_email","Parent Email",x.parent_email||"","email"),select("boarding_status","Boarding Status",[{value:"Day",label:"Day"},{value:"Boarding",label:"Boarding"}],x.boarding_status||"",true),input("password",x.id&&!x.profile_id?"Portal Password (required to create login)":"Portal Password", "", "password", !x.id||!x.profile_id, 'minlength="6" autocomplete="new-password"'),select("status","Status",[{value:"active",label:"Active"},{value:"graduated",label:"Graduated"},{value:"withdrawn",label:"Withdrawn"}],x.status||"active",true)],x.id?"Update Student":"Create Student"));m.querySelector("#modal-cancel").onclick=()=>m.remove();m.querySelector("#modal-form").onsubmit=async e=>{e.preventDefault();try{const f=e.target,d=Object.fromEntries(new FormData(f));const result=await adminPost({type:"student",id:x.id,...d});m.remove();toast(x.id?(result.portal_account_linked?"Student updated and portal login linked.":"Student updated."):"Student created with portal login. The admission number and password are ready for student sign-in.","success");await adminStudents(document.querySelector("#admin-panel"))}catch(e){toast(e.message,"error")}}}
+function studentModal(classes,x={}){
+ const firstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const hasLogin=Boolean(x.id&&x.profile_id);
+ const passwordFields=[
+   input("password",x.id?"Set / Reset Portal Password (suggested first-name password)":"Portal Password (defaults to first name)",firstName,"text",!x.id||!x.profile_id,'minlength="6" autocomplete="off"'),
+   x.id&&hasLogin?'<label class="field"><span><input name="change_password" type="checkbox" value="true"> Apply this password when saving</span><small class="muted">Leave unchecked to keep the current password. Supabase does not reveal existing passwords.</small></label>':'<p class="muted">The password starts as the first word of the student’s full name. You can see and edit it before saving.</p>'
+ ];
+ const m=modal(x.id?"Edit Student":"Add Student",formHtml([input("full_name","Full Name",x.full_name||"", "text",true),input("admission_number","Admission Number",x.admission_number||"", "text",true),select("class_id","Class",classes.map(c=>({value:c.id,label:c.name})),x.class_id||"",false),input("date_of_birth","Date of Birth",x.date_of_birth||"","date"),select("gender","Gender",[{value:"Male",label:"Male"},{value:"Female",label:"Female"}],x.gender||"",true),input("guardian_name","Parent / Guardian Name",x.guardian_name||""),input("guardian_contact","Parent Phone",x.guardian_contact||""),input("parent_email","Parent Email",x.parent_email||"","email"),select("boarding_status","Boarding Status",[{value:"Day",label:"Day"},{value:"Boarding",label:"Boarding"}],x.boarding_status||"",true),...passwordFields,select("status","Status",[{value:"active",label:"Active"},{value:"graduated",label:"Graduated"},{value:"withdrawn",label:"Withdrawn"}],x.status||"active",true)],x.id?"Update Student":"Create Student"));
+ const form=m.querySelector("#modal-form"),password=form.querySelector('[name="password"]'),name=form.querySelector('[name="full_name"]'),apply=form.querySelector('[name="change_password"]');
+ let passwordTouched=false;
+ password?.addEventListener("input",()=>{passwordTouched=true;if(apply)apply.checked=true});
+ name?.addEventListener("input",()=>{if(!passwordTouched&&password){password.value=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"") }});
+ m.querySelector("#modal-cancel").onclick=()=>m.remove();
+ form.onsubmit=async e=>{e.preventDefault();try{
+   const d=Object.fromEntries(new FormData(form));
+   if(x.id&&hasLogin&&d.change_password!=="true")delete d.password;
+   delete d.change_password;
+   const result=await adminPost({type:"student",id:x.id,...d});
+   m.remove();
+   toast(x.id?(result.portal_account_linked?"Student updated and portal login linked.":"Student updated."):"Student created with portal login. The admission number and password are ready for student sign-in.","success");
+   await adminStudents(document.querySelector("#admin-panel"));
+ }catch(e){toast(e.message,"error")}}
+}
 async function adminTeachers(panel){
  const r=await adminGet("teachers",{page:1,pageSize:1000}),classes=(await adminGet("classes")).data||[],subjects=(await adminGet("subjects",{page:1,pageSize:200})).data||[];
  panel.innerHTML='<div class="section-head"><div><p class="section-label">Teachers</p><h2>Manage Teachers</h2><p class="muted">Assign each teacher to the class and subject they are responsible for.</p></div><div><button class="btn btn-outline" id="export-teachers">⇩ CSV</button> <button class="btn navy-btn" id="add-teacher">+ Add Teacher</button></div></div>'+table(["Name","Staff ID","Role","Class","Subject","Status","Actions"],r.data.map(x=>'<tr><td>'+esc(x.full_name)+'</td><td>'+esc(x.staff_id)+'</td><td>'+pill(x.role)+'</td><td>'+esc(x.class_name||"—")+'</td><td>'+esc(x.subject_name||"—")+'</td><td>'+pill(x.status)+'</td><td><button class="btn btn-sm btn-outline edit-teacher" data-id="'+x.id+'">Edit</button> <button class="btn btn-sm danger-btn delete-record" data-table="teachers" data-id="'+x.id+'">Delete</button></td></tr>').join(""));
