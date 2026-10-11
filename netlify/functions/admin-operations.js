@@ -125,11 +125,12 @@ exports.handler = async event => {
     const b=JSON.parse(event.body||"{}"), type=clean(b.type), id=clean(b.id);
 
     if(type==="student") {
-      if(!clean(b.full_name)||!clean(b.admission_number)||(!id&&!clean(b.password))) return json(400,{error:"Full name, admission number and password are required for a new student."});
-      if(!id&&clean(b.password).length<6)return json(400,{error:"Student portal password must be at least 6 characters."});
-      if(id&&clean(b.password)&&clean(b.password).length<6)return json(400,{error:"Student portal password must be at least 6 characters."});
-      
-      const surname=(clean(b.full_name).split(/\s+/).filter(Boolean).pop()||"Student");const password=clean(b.password);
+      if(!clean(b.full_name)||!clean(b.admission_number)) return json(400,{error:"Full name and admission number are required for a student."});
+      // A new student's default password is the first word in their full name.
+      // A password typed by the administrator always takes precedence.
+      const firstName=(clean(b.full_name).split(/\s+/).filter(Boolean)[0]||"Student");
+      const password=clean(b.password)||(!id?firstName:"");
+      if(password&&password.length<6)return json(400,{error:"The password must be at least 6 characters. This student's first name is shorter than 6 characters, so enter a longer password."});
       let profileId=clean(b.profile_id)||null;
       if(!id) {
         const auth=await createOrUpdateAuth(db,{profileId:null,role:"student",password,identifier:b.admission_number,email:null});
