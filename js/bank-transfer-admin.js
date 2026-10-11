@@ -1,4 +1,4 @@
-import{confirmAction}from"./portal-dialogs.js?v=20261010-school-upgrade-9";
+import{confirmAction}from"./portal-dialogs.js?v=20261010-final-audit-1";
 export async function renderBankTransferNotifications(panel,{api,esc,table,pill,toast}){
  const host=document.createElement("section");host.className="dashboard-card";host.id="bank-transfer-review";host.innerHTML='<div class="section-head"><div><h3>Bank Transfer Notifications</h3><p class="muted">Review parent-submitted transfers. Confirm only after checking the bank account.</p></div><button class="btn btn-outline" id="refresh-bank-transfers">Refresh</button></div><div id="bank-transfer-review-content"><p class="muted">Loading notifications…</p></div>';
  panel.append(host);
