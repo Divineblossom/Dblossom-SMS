@@ -203,10 +203,11 @@ exports.handler = async event => {
 
     if(type==="teacher") {
       if(!clean(b.full_name)||!clean(b.staff_id)) return json(400,{error:"Full name and Staff ID are required."});
-      if(!id&&!clean(b.password)) return json(400,{error:"Password is required for a new teacher."});
-      if(clean(b.password)&&clean(b.password).length<6)return json(400,{error:"Teacher portal password must be at least 6 characters."});
+      const firstName=(clean(b.full_name).split(/\s+/).filter(Boolean)[0]||"Teacher");
+      const password=clean(b.password)||(!id?firstName:"");
+      if(password&&password.length<6)return json(400,{error:"The first name or chosen password is shorter than the required 6 characters. Enter a password of at least 6 characters."});
       if(!id) {
-        const auth=await createOrUpdateAuth(db,{profileId:null,role:"teacher",password:clean(b.password),identifier:b.staff_id,email:clean(b.email)||null});
+        const auth=await createOrUpdateAuth(db,{profileId:null,role:"teacher",password,identifier:b.staff_id,email:clean(b.email)||null});
         await upsertProfile(db,auth.profileId,clean(b.full_name),"teacher");
         const {data,error}=await db.from("teachers").insert({full_name:clean(b.full_name),staff_id:clean(b.staff_id),email:clean(b.email)||null,phone:clean(b.phone)||null,role:(clean(b.portal_access)==="materials_only"?"Teaching Staff (Materials Only)":clean(b.role)||"Teaching Staff"),status:clean(b.status)||"active",profile_id:auth.profileId}).select().single();
         if(error){await db.auth.admin.deleteUser(auth.profileId);throw error}
