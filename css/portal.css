@@ -211,3 +211,14 @@ button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
   background:#e8f0ff!important;color:#17375e!important;border:1px solid #8db5ff!important;opacity:1!important;
 }
 .portal-page .icon-btn,.portal-page .portal-show{background:#e8f0ff!important;color:#17375e!important;border:1px solid #8db5ff!important}
+
+/* Final portal-wide visibility, session fields, and A4 result sheet safeguards */
+.portal-page .result-filters input[name="session"],.portal-page input[name="session"],.portal-page select[name="session"]{display:block!important;visibility:visible!important;opacity:1!important;filter:none!important;background:#fff!important;color:#172033!important;border:2px solid #64748b!important;min-height:48px!important;width:100%!important;position:relative!important;z-index:1!important;box-shadow:0 0 0 2px rgba(37,99,235,.08)!important}
+.portal-page .result-filters label,.portal-page .result-filters .field{display:block!important;visibility:visible!important;opacity:1!important;min-width:0!important}
+.portal-page .result-filters{overflow:visible!important}
+.portal-page button,.portal-page .btn,.portal-page a.btn,.portal-page input[type=button],.portal-page input[type=submit]{filter:none!important;opacity:1!important;visibility:visible!important;text-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.portal-page .report-actions .btn{display:inline-flex!important;align-items:center;justify-content:center;min-height:44px!important;background:#1d4ed8!important;color:#fff!important;border:1px solid #1d4ed8!important}
+.portal-page .report-wrap{width:100%;max-width:210mm;min-height:0;box-sizing:border-box;background:#fff;color:#111}
+.portal-page .report-summary{display:flex;flex-direction:column;gap:8px}
+.portal-page .report-summary>div{width:100%;box-sizing:border-box}
+@media print{@page{size:A4 portrait;margin:12mm}.portal-page .report-wrap{width:186mm!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:visible!important}.portal-page .report-actions,.portal-page .portal-dashboard-header,.portal-page .portal-static-header,.portal-page .portal-static-sidebar,.portal-page .portal-mobile-nav{display:none!important}.portal-page .report-wrap table{width:100%!important;min-width:0!important;break-inside:auto}.portal-page .report-wrap tr{break-inside:avoid}.portal-page .report-summary>div{break-inside:avoid;background:#fff!important}}
