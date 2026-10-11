@@ -6,6 +6,7 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
     {id:"students",label:"Students",table:"students"},
     {id:"teachers",label:"Teachers",table:"teachers"},
     {id:"results",label:"Results",table:"results"},
+    {id:"promotions",label:"Student Promotions"},
     {id:"parents",label:"Parents",table:"parents"},
     {id:"payments",label:"Payments",table:"fee_payments"},
     {id:"bank-transfers",label:"Bank Transfer Notifications"},
@@ -91,10 +92,40 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
     }catch(e){main.innerHTML=card("Parent & Administration Chats",'<div class="portal-error"><p>'+esc(e.message||"Could not load parent chats.")+'</p><button class="btn navy-btn" id="retry-parent-chats">Try again</button></div>');document.getElementById("retry-parent-chats").onclick=loadParentChats}
   }
   async function printAdminStudentResults(studentId,rows){const student=rows.find(x=>x.student_id===studentId)?.students;if(!student)return alertAction("Student details are not available.",{title:"Cannot view result",danger:true});const escHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));const total=rows.reduce((n,x)=>n+Number(x.total_score||0),0),max=rows.length*100,pct=max?Math.round(total/max*10000)/100:0,w=window.open("","_blank","width=1000,height=800");if(!w)return alertAction("Please allow the result print window.",{title:"Print result"});const trs=rows.map(x=>'<tr><td>'+escHtml(x.subjects?.name||"—")+'</td><td>'+escHtml(x.terms?.name||"—")+'</td><td>'+escHtml(x.terms?.academic_sessions?.name||"—")+'</td><td>'+escHtml(x.ca_score)+'</td><td>'+escHtml(x.exam_score)+'</td><td>'+escHtml(x.total_score)+'</td><td>'+escHtml(x.grade)+'</td></tr>').join("");w.document.write('<!doctype html><html><head><title>'+escHtml(student.full_name)+' - Results</title><style>@page{size:A4 portrait;margin:12mm}body{font-family:Arial,sans-serif;color:#111;margin:0}.head{text-align:center;border-bottom:3px solid #17375e;padding-bottom:12px}.head img{width:68px;height:68px;object-fit:contain}.head h1{margin:5px 0;font-size:22px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}table{width:100%;border-collapse:collapse}th,td{border:1px solid #334155;padding:7px;font-size:10pt;text-align:center}th:first-child,td:first-child{text-align:left}.summary{display:flex;flex-direction:column;gap:8px;margin-top:18px}.summary div{width:100%;box-sizing:border-box;border:1px solid #94a3b8;padding:12px;break-inside:avoid}.summary strong{display:block;font-size:20px;margin-top:5px}@media print{button{display:none}}</style></head><body><header class="head"><img src="/logo.jpg" alt="School logo"><h1>D’Blossom Model Private Schools</h1><p>Abeokuta, Ogun State, Nigeria</p><h2>STUDENT ACADEMIC RESULT</h2></header><div class="meta"><div><b>Student:</b> '+escHtml(student.full_name)+'</div><div><b>Admission No.:</b> '+escHtml(student.admission_number)+'</div><div><b>Class:</b> '+escHtml(student.classes?.name||"—")+'</div><div><b>Records:</b> '+rows.length+' subject result(s)</div></div><table><thead><tr><th>Subject</th><th>Term</th><th>Session</th><th>CA</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>'+trs+'</tbody></table><div class="summary"><div><span>Total Score</span><strong>'+total+'</strong></div><div><span>Percentage Score</span><strong>'+pct+'%</strong></div></div><p>Administrator view — results are read-only in this portal.</p><script>window.onload=function(){window.print()}<\\/script></body></html>');w.document.close()}
+  async function loadPromotions(){
+    main.innerHTML=card("Student Promotions",'<p class="portal-muted">Promotion uses each student’s average across recorded subject results for the selected term. Students with an overall average of exactly 50% or above qualify, provided a next class exists. Final class SS3 is not automatically moved.</p><div class="form-grid"><label class="field">Term<select id="promotion-term" required><option value="">Choose term</option></select></label><div class="form-actions"><button type="button" class="btn navy-btn" id="promotion-preview">Preview eligible students</button></div></div><div id="promotion-preview-results"><p class="portal-muted">Choose a term and preview the eligible students before applying any changes.</p></div>');
+    const selectEl=document.getElementById("promotion-term"),resultsEl=document.getElementById("promotion-preview-results");
+    try{
+      const terms=await getRows("terms");
+      selectEl.innerHTML='<option value="">Choose term</option>'+terms.map(t=>'<option value="'+esc(t.id)+'">'+esc(t.name||"Term")+' — '+esc(t.academic_sessions?.name||"Academic session")+'</option>').join("");
+    }catch(e){resultsEl.innerHTML='<div class="portal-error">'+esc(e.message||"Could not load terms.")+'</div>';return}
+    document.getElementById("promotion-preview").onclick=async()=>{
+      const termId=selectEl.value;if(!termId){resultsEl.innerHTML='<p class="portal-error">Choose a term first.</p>';return}
+      resultsEl.innerHTML='<p class="portal-muted">Calculating overall averages…</p>';
+      try{
+        const preview=await api({type:"promotion-preview",term_id:termId});
+        const rows=preview.eligible||[];
+        resultsEl.innerHTML='<div class="portal-section-heading"><div><h3>'+Number(preview.eligible_count||0)+' eligible student(s)</h3><p class="portal-muted">Minimum overall average: 50%. Only students listed below will be promoted.</p></div></div>'+
+          (rows.length?'<div class="portal-table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Admission No.</th><th>Current Class</th><th>Next Class</th><th>Overall Average</th><th>Subjects Recorded</th></tr></thead><tbody>'+rows.map(x=>'<tr><td>'+esc(x.full_name)+'</td><td>'+esc(x.admission_number||"—")+'</td><td>'+esc(x.from_class)+'</td><td>'+esc(x.to_class)+'</td><td><strong>'+Number(x.overall_average).toFixed(2)+'%</strong></td><td>'+Number(x.subjects_count||0)+'</td></tr>').join("")+'</tbody></table></div><div class="form-actions"><button type="button" class="btn navy-btn" id="apply-promotions">Promote '+rows.length+' eligible student(s)</button></div>':'<p class="portal-muted">No eligible students were found for this term. Students in the final class or already promoted in this academic session are not listed.</p>');
+        const apply=document.getElementById("apply-promotions");
+        if(apply)apply.onclick=async()=>{
+          if(!await confirmAction("Promote "+rows.length+" eligible student(s) to the next class? Their class records will be updated and a promotion history entry will be saved.",{title:"Confirm student promotions",confirmText:"Promote students",danger:false}))return;
+          apply.disabled=true;apply.textContent="Promoting…";
+          try{
+            const done=await api({type:"promotion-apply",term_id:termId});
+            const count=Number(done.data?.promoted_count||0);
+            resultsEl.innerHTML='<div class="portal-notice success"><strong>Promotion complete.</strong><p>'+count+' student(s) promoted successfully. Students with an overall average below 50% were not promoted.</p></div>';
+            alertAction(count+" student(s) promoted successfully.",{title:"Promotion completed",confirmText:"Done"});
+          }catch(e){resultsEl.insertAdjacentHTML("afterbegin",'<div class="portal-error">'+esc(e.message||"Promotions could not be completed.")+'</div>');apply.disabled=false;apply.textContent="Promote "+rows.length+" eligible student(s)"}
+        };
+      }catch(e){resultsEl.innerHTML='<div class="portal-error"><p>'+esc(e.message||"Could not calculate promotions.")+'</p><button type="button" class="btn btn-outline" id="retry-promotion-preview">Try again</button></div>';document.getElementById("retry-promotion-preview").onclick=()=>document.getElementById("promotion-preview").click()}
+    };
+  }
   async function openSection(id){
     markActive(id);
     if(id==="overview")return loadOverview();
     if(id==="messages")return loadParentChats();
+    if(id==="promotions")return loadPromotions();
     if(id==="advanced")return loadAdvanced();
     if(id==="bank-transfers"){
       main.innerHTML=card("Bank Transfer Notifications","<p>Loading parent-submitted transfer notifications…</p>");
