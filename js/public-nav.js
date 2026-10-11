@@ -2,4 +2,4 @@ const menu=document.querySelector("#menu-button");
 const nav=document.querySelector("#mobile-nav");
 function closeMenu(){if(!menu||!nav)return;nav.classList.remove("open");menu.setAttribute("aria-expanded","false");menu.innerHTML="☰ <span>Menu</span>"}
 if(menu&&nav){menu.addEventListener("click",()=>{const open=nav.classList.toggle("open");menu.setAttribute("aria-expanded",String(open));menu.innerHTML=open?"✕ <span>Close</span>":"☰ <span>Menu</span>"});nav.querySelectorAll("a").forEach(link=>link.addEventListener("click",closeMenu));document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()})}
-document.querySelectorAll(".floating-whatsapp").forEach(a=>a.remove());
+document.querySelectorAll(".floating-whatsapp").forEach(a=>a.remove());const whatsappButtons=[...document.querySelectorAll(".school-whatsapp-float")];whatsappButtons.slice(1).forEach(a=>a.remove());if(whatsappButtons[0])whatsappButtons[0].setAttribute("href","https://wa.me/2347025065593?text=Hello%20D%E2%80%99Blossom%20Model%20Private%20Schools%2C%20I%20have%20an%20enquiry.");
