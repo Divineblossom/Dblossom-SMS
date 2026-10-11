@@ -238,3 +238,15 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 .btn-outline:hover{background:#d7e6ff;color:#102947}
 .btn-gold,.nav-enrol{background:#f4c542;color:#172033;border:1px solid #d6a72c}
 button:disabled,.btn:disabled{opacity:.65;cursor:not-allowed}
+
+/* DBMS site-wide control visibility and contrast pass — 2026-10-10 */
+button,.btn,input[type=button],input[type=submit],input[type=reset]{filter:none!important;opacity:1!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important;visibility:visible!important;font-weight:750;transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .15s ease}
+button:not(:disabled),.btn,input[type=button]:not(:disabled),input[type=submit]:not(:disabled),input[type=reset]:not(:disabled){cursor:pointer}
+.btn:not(.btn-outline):not(.btn-outline-light):not(.btn-gold):not(.btn-danger):not(.danger-btn):not(.btn-success):not(.btn-warning),button.primary,button[type=submit],input[type=submit]{background:#1d4ed8!important;color:#fff!important;border:1px solid #1d4ed8!important}
+.btn-outline,.btn-outline-light{background:#eef4ff!important;color:#17375e!important;border:1px solid #9dbbf4!important}
+.btn-gold,.btn-warning{background:#f4c542!important;color:#172033!important;border:1px solid #d6a72c!important}
+.btn-danger,.danger-btn{background:#b91c1c!important;color:#fff!important;border:1px solid #b91c1c!important}
+.btn-success{background:#15803d!important;color:#fff!important;border:1px solid #15803d!important}
+button:disabled,.btn:disabled,input:disabled{opacity:.62!important;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[type=submit]:focus-visible{outline:3px solid #f4c542!important;outline-offset:3px!important}
+.school-whatsapp-float{filter:none!important;opacity:1!important;visibility:visible!important}
