@@ -124,6 +124,50 @@ exports.handler = async event => {
     if(event.httpMethod!=="POST"&&event.httpMethod!=="PUT"&&event.httpMethod!=="DELETE") return json(405,{error:"Method Not Allowed"});
     const b=JSON.parse(event.body||"{}"), type=clean(b.type), id=clean(b.id);
 
+    if(type==="promotion-preview") {
+      const termId=clean(b.term_id);
+      if(!termId) return json(400,{error:"Choose the term to calculate promotions for."});
+      const {data:term,error:termError}=await db.from("terms").select("id,name,session_id,academic_sessions(name)").eq("id",termId).maybeSingle();
+      if(termError)throw termError;
+      if(!term)return json(404,{error:"The selected term was not found."});
+      if(!term.session_id)return json(400,{error:"This term is not linked to an academic session."});
+      const [{data:resultRows,error:resultsError},{data:classes,error:classesError},{data:previous,error:previousError}]=await Promise.all([
+        db.from("results").select("student_id,total_score,ca_score,exam_score,students(id,full_name,admission_number,class_id,status,classes(name))").eq("term_id",termId).limit(10000),
+        db.from("classes").select("id,name").eq("is_active",true).order("name"),
+        db.from("student_promotions").select("student_id").eq("from_session_id",term.session_id)
+      ]);
+      for(const e of [resultsError,classesError,previousError])if(e)throw e;
+      const norm=s=>String(s||"").toLowerCase().replace(/\\s+/g,"");
+      const byName=new Map((classes||[]).map(x=>[norm(x.name),x]));
+      const nextName={"primary1":"primary2","primary2":"primary3","primary3":"primary4","primary4":"primary5","primary5":"jss1","jss1":"jss2","jss2":"jss3","jss3":"ss1","ss1":"ss2","ss2":"ss3"};
+      const already=new Set((previous||[]).map(x=>x.student_id));
+      const grouped=new Map();
+      for(const row of resultRows||[]){
+        const student=Array.isArray(row.students)?row.students[0]:row.students;
+        if(!student||String(student.status||"active").toLowerCase()!=="active"||!student.class_id)continue;
+        const score=Number(row.total_score??(Number(row.ca_score||0)+Number(row.exam_score||0)));
+        if(!Number.isFinite(score))continue;
+        const g=grouped.get(student.id)||{student,className:(Array.isArray(student.classes)?student.classes[0]:student.classes)?.name||"",sum:0,count:0};
+        g.sum+=score;g.count+=1;grouped.set(student.id,g);
+      }
+      const eligible=[];
+      for(const [studentId,g] of grouped){
+        const average=g.sum/g.count,source=byName.get(norm(g.className)),targetName=nextName[norm(g.className)],target=targetName?byName.get(targetName):null;
+        if(average<50||!source||!target||already.has(studentId))continue;
+        eligible.push({student_id:studentId,full_name:g.student.full_name,admission_number:g.student.admission_number,from_class:g.className,to_class:target.name,overall_average:Math.round(average*100)/100,subjects_count:g.count});
+      }
+      eligible.sort((a,b)=>a.from_class.localeCompare(b.from_class)||a.full_name.localeCompare(b.full_name));
+      return json(200,{term:{id:term.id,name:term.name,session:term.academic_sessions?.name||"",session_id:term.session_id},threshold_percent:50,eligible_count:eligible.length,eligible});
+    }
+    if(type==="promotion-apply") {
+      const termId=clean(b.term_id);
+      if(!termId)return json(400,{error:"Choose the term before applying promotions."});
+      const {data,error}=await db.rpc("promote_students_by_term",{p_term_id:termId,p_promoted_by:user.id||null});
+      if(error)return json(400,{error:error.message||"Student promotions could not be completed."});
+      await audit(db,user,"promote","students",termId,{term_id:termId,promoted_count:Number(data?.promoted_count||0),threshold_percent:50});
+      return json(200,{data});
+    }
+
     if(type==="student") {
       if(!clean(b.full_name)||!clean(b.admission_number)) return json(400,{error:"Full name and admission number are required for a student."});
       // A new student's default password is the first word in their full name.
