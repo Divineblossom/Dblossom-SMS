@@ -10,9 +10,9 @@ exports.handler=async event=>{try{
  if(!teacher||String(teacher.status||"active").toLowerCase()!=="active")return json(403,{error:"An active teacher account linked to this login could not be found. Ask the administrator to check your staff account."});
  const currentRole=String(profile?.role||"").toLowerCase();if(["admin","super_admin"].includes(currentRole))return json(403,{error:"This account is registered as an administrator, not a teacher."});if(currentRole!=="teacher"){const{data:fixedProfile,error:profileError}=await db.from("profiles").upsert({id:user.id,role:"teacher",full_name:profile?.full_name||teacher.full_name},{onConflict:"id"}).select("role,full_name").single();if(profileError)throw profileError;profile=fixedProfile;}
  const{data:assign}=await db.from("teacher_assignments").select("class_id,subject_id,classes(id,name),subjects(id,name,class_id)").eq("teacher_id",teacher.id);
- const classIds=[...new Set((assign||[]).map(x=>x.class_id).filter(Boolean))];
- if(!classIds.length){const{data:cls}=await db.from("classes").select("id,name").eq("name",teacher.assigned_class).maybeSingle();if(cls)classIds.push(cls.id)}
  const materialOnly=String(teacher.role||"").toLowerCase().includes("materials only");
+ const classIds=materialOnly?[]:[...new Set((assign||[]).map(x=>x.class_id).filter(Boolean))];
+ if(!materialOnly&&!classIds.length){const{data:cls}=await db.from("classes").select("id,name").eq("name",teacher.assigned_class).maybeSingle();if(cls)classIds.push(cls.id)}
  if(!classIds.length&&!materialOnly)return json(403,{error:"Your teacher account is not assigned to a class. Ask the administrator to assign a class and subject, or ask for Materials Upload Only access if that is your role."});
  const students=classIds.length?(await db.from("students").select("id,admission_number,full_name,guardian_name,class_id,status,classes(name)").in("class_id",classIds).order("full_name").limit(1000)).data||[]:[];
  const studentIds=students.map(x=>x.id),subjectIds=[...new Set((assign||[]).map(x=>x.subject_id).filter(Boolean))];
