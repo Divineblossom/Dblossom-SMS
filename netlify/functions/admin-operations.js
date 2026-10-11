@@ -208,7 +208,7 @@ exports.handler = async event => {
       if(!id) {
         const auth=await createOrUpdateAuth(db,{profileId:null,role:"teacher",password:clean(b.password),identifier:b.staff_id,email:clean(b.email)||null});
         await upsertProfile(db,auth.profileId,clean(b.full_name),"teacher");
-        const {data,error}=await db.from("teachers").insert({full_name:clean(b.full_name),staff_id:clean(b.staff_id),email:clean(b.email)||null,phone:clean(b.phone)||null,role:clean(b.role)||"Teaching Staff",status:clean(b.status)||"active",profile_id:auth.profileId}).select().single();
+        const {data,error}=await db.from("teachers").insert({full_name:clean(b.full_name),staff_id:clean(b.staff_id),email:clean(b.email)||null,phone:clean(b.phone)||null,role:(clean(b.portal_access)==="materials_only"?"Teaching Staff (Materials Only)":clean(b.role)||"Teaching Staff"),status:clean(b.status)||"active",profile_id:auth.profileId}).select().single();
         if(error){await db.auth.admin.deleteUser(auth.profileId);throw error}
         if(clean(b.class_id)){const {error:ae}=await db.from("teacher_assignments").insert({teacher_id:data.id,class_id:clean(b.class_id),subject_id:clean(b.subject_id)||null});if(ae)throw ae;}
         await audit(db,user,"create","teacher",data.id,{staff_id:data.staff_id,class_id:clean(b.class_id)||null,subject_id:clean(b.subject_id)||null});return json(201,{data});
@@ -219,7 +219,7 @@ exports.handler = async event => {
         if(profileId) await createOrUpdateAuth(db,{profileId,role:"teacher",password:clean(b.password),identifier:b.staff_id});
         else { const auth=await createOrUpdateAuth(db,{profileId:null,role:"teacher",password:clean(b.password),identifier:b.staff_id,email:clean(b.email)||null}); profileId=auth.profileId; }
       }
-      const {data,error}=await db.from("teachers").update({full_name:clean(b.full_name),staff_id:clean(b.staff_id),email:clean(b.email)||null,phone:clean(b.phone)||null,role:clean(b.role)||"Teaching Staff",status:clean(b.status)||"active",profile_id:profileId}).eq("id",id).select().single();if(error)throw error;if(profileId)await upsertProfile(db,profileId,data.full_name,"teacher");
+      const {data,error}=await db.from("teachers").update({full_name:clean(b.full_name),staff_id:clean(b.staff_id),email:clean(b.email)||null,phone:clean(b.phone)||null,role:(clean(b.portal_access)==="materials_only"?"Teaching Staff (Materials Only)":clean(b.role)||"Teaching Staff"),status:clean(b.status)||"active",profile_id:profileId}).eq("id",id).select().single();if(error)throw error;if(profileId)await upsertProfile(db,profileId,data.full_name,"teacher");
       if(b.class_id!==undefined||b.subject_id!==undefined){await db.from("teacher_assignments").delete().eq("teacher_id",id);if(clean(b.class_id)){const {error:ae}=await db.from("teacher_assignments").insert({teacher_id:id,class_id:clean(b.class_id),subject_id:clean(b.subject_id)||null});if(ae)throw ae;}}
       await audit(db,user,"update","teacher",id,{class_id:clean(b.class_id)||null,subject_id:clean(b.subject_id)||null});return json(200,{data});
     }
