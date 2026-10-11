@@ -322,3 +322,39 @@
 .portal-page .result-filters input[name="session"],.portal-page input[name="session"],.portal-page select[name="session"]{display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;color:#172033!important;border:2px solid #64748b!important;min-height:48px!important;width:100%!important;position:relative!important;z-index:1!important;box-shadow:0 0 0 2px rgba(37,99,235,.08)!important}
 .portal-page .result-filters label,.portal-page .result-filters .field{display:block!important;visibility:visible!important;opacity:1!important;min-width:0!important}
 @media print{@page{size:A4 portrait;margin:12mm}.portal-page .report-wrap{width:186mm!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:visible!important}.portal-page .report-actions,.portal-page .portal-dashboard-header,.portal-page .portal-static-header,.portal-page .portal-static-sidebar,.portal-page .portal-mobile-nav{display:none!important}.portal-page .report-wrap table{width:100%!important;min-width:0!important}.portal-page .report-wrap tr{break-inside:avoid}}
+
+
+/* Mobile header: keep portal actions on one horizontal line and retain the dropdown menu. */
+@media(max-width:680px){
+  body.portal-page .portal-head-actions{
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:center;
+    gap:6px;
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:2px 1px 6px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+  body.portal-page .portal-head-actions>*{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:max-content;
+    min-height:44px;
+    white-space:nowrap;
+    justify-content:center;
+  }
+  body.portal-page .portal-head-row{gap:8px}
+  body.portal-page .portal-head-row>div{min-width:0}
+}
+@media(max-width:380px){
+  body.portal-page .portal-head-actions{
+    display:flex!important;
+    grid-template-columns:none!important;
+  }
+  body.portal-page .portal-head-actions>*{width:auto!important}
+}
