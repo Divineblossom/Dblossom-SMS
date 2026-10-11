@@ -19,7 +19,7 @@ export async function renderTeacherPortal(dashboardView,shell){
   dashboardView.innerHTML=shell(t.full_name||"Teacher",(t.role||"Teacher")+" | "+(t.assigned_class||"No class assigned"),'<div class="dashboard-shell"><div class="stats"><article class="stat"><small>Assigned Class</small><strong>'+esc(t.assigned_class)+'</strong></article><article class="stat"><small>Students</small><strong>'+students.length+'</strong></article><article class="stat"><small>Results</small><strong>'+((p.results||[]).length)+'</strong></article></div><div class="admin-layout"><aside class="admin-sidebar">'+tabs.map((x,i)=>'<button class="teacher-tab admin-tab '+(i?"":"active")+'" data-tab="'+x[0]+'"><span>'+x[2]+"</span>"+x[1]+"</button>").join("")+'</aside><div class="admin-content" id="teacher-panel"></div></div></div>');
  }
  const panel=document.querySelector("#teacher-panel");
- const headerActions=document.querySelector(".portal-dashboard-header .portal-head-row");
+ const headerActions=document.querySelector(".portal-dashboard-header .portal-head-row .portal-head-actions, .portal-dashboard-header .portal-head-actions, .portal-static-header .portal-head-actions");
  if(headerActions&&!document.querySelector("#enable-teacher-browser-notifications")){
   const notificationButton=document.createElement("button");
   notificationButton.type="button";
