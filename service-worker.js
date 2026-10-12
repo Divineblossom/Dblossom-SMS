@@ -4,8 +4,8 @@ self.addEventListener("push", event => {
   const title = String(payload.title || "D’Blossom School Notification");
   const options = {
     body: String(payload.body || "You have a new school portal notification."),
-    icon: "/logo.jpg",
-    badge: "/logo.jpg",
+    icon: "/logo.jpeg",
+    badge: "/logo.jpeg",
     tag: String(payload.tag || "dblossom-message"),
     renotify: true,
     data: { url: String(payload.url || "/") }
