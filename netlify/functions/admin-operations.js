@@ -173,7 +173,8 @@ exports.handler = async event => {
       // A new student's default password is the first word in their full name.
       // A password typed by the administrator always takes precedence.
       const firstName=(clean(b.full_name).split(/\s+/).filter(Boolean)[0]||"Student");
-      const password=clean(b.password)||(!id?firstName:"");
+      const defaultPassword=firstName.length>=6?firstName:firstName+"123";
+      const password=clean(b.password)||(!id?defaultPassword:"");
       if(password&&password.length<6)return json(400,{error:"The password must be at least 6 characters. This student's first name is shorter than 6 characters, so enter a longer password."});
       let profileId=clean(b.profile_id)||null;
       if(!id) {
@@ -204,7 +205,8 @@ exports.handler = async event => {
     if(type==="teacher") {
       if(!clean(b.full_name)||!clean(b.staff_id)) return json(400,{error:"Full name and Staff ID are required."});
       const firstName=(clean(b.full_name).split(/\s+/).filter(Boolean)[0]||"Teacher");
-      const password=clean(b.password)||(!id?firstName:"");
+      const defaultPassword=firstName.length>=6?firstName:firstName+"123";
+      const password=clean(b.password)||(!id?defaultPassword:"");
       if(password&&password.length<6)return json(400,{error:"The first name or chosen password is shorter than the required 6 characters. Enter a password of at least 6 characters."});
       if(!id) {
         const auth=await createOrUpdateAuth(db,{profileId:null,role:"teacher",password,identifier:b.staff_id,email:clean(b.email)||null});
