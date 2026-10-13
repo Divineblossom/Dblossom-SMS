@@ -35,3 +35,26 @@
  .contact-actions .btn,.admission-actions .btn{width:100%;min-width:0}
  .footer-grid{grid-template-columns:1fr}
 }
+
+
+/* Single right-aligned desktop-style navigation dropdown at every viewport size. */
+@media(max-width:1023px){
+ .desktop-nav{display:flex!important;align-items:center;gap:clamp(5px,1.5vw,12px);margin-left:auto;font-size:clamp(10px,1.8vw,13px);white-space:nowrap}
+ .menu-button,.mobile-nav{display:none!important}
+ .nav-wrap{height:80px;gap:8px}
+ .brand{flex:0 1 auto;min-width:0;max-width:38%;gap:6px}
+ .brand img{width:34px;height:34px;flex:0 0 auto}
+ .brand-name{font-size:clamp(10px,1.8vw,14px);line-height:1.1;overflow-wrap:anywhere}
+ .desktop-nav>a:not(.nav-enrol){padding:6px 0}
+ .desktop-nav .nav-menu{position:relative;flex:0 0 auto}
+ .desktop-nav summary{padding:7px 8px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--navy);font-weight:700}
+ .desktop-nav .dropdown{right:0;top:calc(100% + 8px);width:min(260px,calc(100vw - 16px));max-height:calc(100vh - 100px);overflow-y:auto;z-index:120}
+ .desktop-nav .dropdown a{white-space:normal;min-height:40px}
+}
+@media(max-width:600px){
+ .brand{max-width:36%}
+ .brand-name{display:none}
+ .desktop-nav{gap:clamp(6px,2.1vw,11px);font-size:clamp(10px,2.8vw,12px)}
+ .desktop-nav summary{padding:7px 6px}
+}
+@media(max-width:360px){.desktop-nav{gap:5px;font-size:10px}.brand img{width:30px;height:30px}}
