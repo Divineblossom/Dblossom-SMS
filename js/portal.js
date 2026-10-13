@@ -187,7 +187,8 @@ function studentDetailsModal(x={}){
  m.querySelector("#student-details-close").onclick=()=>m.remove();
 }
 function studentModal(classes,x={}){
- const firstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const rawFirstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const firstName=rawFirstName?(rawFirstName.length>=6?rawFirstName:rawFirstName+"123"):"";
  const hasLogin=Boolean(x.id&&x.profile_id);
  const passwordFields=[
    input("password",x.id?"Set / Reset Portal Password (suggested first-name password)":"Portal Password (defaults to first name)",firstName,"text",!x.id||!x.profile_id,'minlength="6" autocomplete="off"'),
@@ -197,7 +198,7 @@ function studentModal(classes,x={}){
  const form=m.querySelector("#modal-form"),password=form.querySelector('[name="password"]'),name=form.querySelector('[name="full_name"]'),apply=form.querySelector('[name="change_password"]');
  let passwordTouched=false;
  password?.addEventListener("input",()=>{passwordTouched=true;if(apply)apply.checked=true});
- name?.addEventListener("input",()=>{if(!passwordTouched&&password){password.value=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"") }});
+ name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
  m.querySelector("#modal-cancel").onclick=()=>m.remove();
  form.onsubmit=async e=>{e.preventDefault();try{
    const d=Object.fromEntries(new FormData(form));
@@ -218,6 +219,9 @@ async function adminTeachers(panel){
  document.querySelector("#export-teachers").onclick=()=>csvDownload("teachers.csv",[["Full Name","Staff ID","Email","Phone","Subject","Role","Assigned Class","Status"],...r.data.map(x=>[x.full_name,x.staff_id,x.email,x.phone,x.subject_name,x.role,x.class_name,x.status])]);adminSectionTools(panel,"Search teachers...",["Active","Disabled","Class Teacher","Teaching Staff"]);
 }
 function teacherModal(classes,subjects,x={}){
+ const rawFirstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const firstName=rawFirstName?(rawFirstName.length>=6?rawFirstName:rawFirstName+"123"):"";
+ const hasLogin=Boolean(x.id&&x.profile_id);
  const m=modal(x.id?"Edit Teacher":"Add Teacher",formHtml([
  input("full_name","Full Name",x.full_name||"","text",true),
  input("staff_id","Staff ID",x.staff_id||"","text",true),
@@ -226,11 +230,22 @@ function teacherModal(classes,subjects,x={}){
  select("class_id","Assigned Class",classes.map(c=>({value:c.id,label:c.name})),x.class_id||"",true),
  select("subject_id","Assigned Subject",subjects.map(s=>({value:s.id,label:s.name+(s.class_id?"":" — General")})),x.subject_id||"",false),
  select("role","Staff Role",[{value:"Principal",label:"Principal"},{value:"Vice Principal",label:"Vice Principal"},{value:"Head of Department",label:"Head of Department"},{value:"Class Teacher",label:"Class Teacher"},{value:"Teaching Staff",label:"Teaching Staff"},{value:"Non-Teaching Staff",label:"Non-Teaching Staff"},{value:"Bursar",label:"Bursar"},{value:"Administrative Staff",label:"Administrative Staff"}],x.role||"Teaching Staff",true),
- input("password","Portal Password","","password",!x.id,'minlength="6"'),
+ input("password",x.id?"Set / Reset Portal Password (suggested first-name password)":"Portal Password (defaults to first name)",firstName,"text",!x.id||!hasLogin,'minlength="6" autocomplete="off"'),
+ x.id&&hasLogin?'<label class="field"><span><input name="change_password" type="checkbox" value="true"> Apply this password when saving</span><small class="muted">Leave unchecked to keep the current password. Existing passwords cannot be read back.</small></label>':'<p class="muted">The password starts with the staff member’s first name. Names shorter than six characters receive “123” at the end to meet the password minimum.</p>',
  select("status","Status",[{value:"active",label:"Active"},{value:"disabled",label:"Disabled"}],x.status||"active",true)
  ],x.id?"Update Teacher":"Create Teacher"));
+ const form=m.querySelector("#modal-form"),password=form.querySelector('[name="password"]'),name=form.querySelector('[name="full_name"]'),apply=form.querySelector('[name="change_password"]');
+ let passwordTouched=false;
+ password?.addEventListener("input",()=>{passwordTouched=true;if(apply)apply.checked=true});
+ name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
  m.querySelector("#modal-cancel").onclick=()=>m.remove();
- m.querySelector("#modal-form").onsubmit=async e=>{e.preventDefault();try{await adminPost({type:"teacher",id:x.id,...Object.fromEntries(new FormData(e.target))});m.remove();toast("Teacher saved.","success");adminTeachers(document.querySelector("#admin-panel"))}catch(e){toast(e.message,"error")}}
+ form.onsubmit=async e=>{e.preventDefault();try{
+   const d=Object.fromEntries(new FormData(form));
+   if(x.id&&hasLogin&&d.change_password!=="true")delete d.password;
+   delete d.change_password;
+   const result=await adminPost({type:"teacher",id:x.id,...d});
+   m.remove();toast(x.id?(result.portal_account_linked?"Teacher updated and portal login linked.":"Teacher updated."):"Teacher created with portal login. The staff ID and password are ready for secure handover.","success");adminTeachers(document.querySelector("#admin-panel"))
+ }catch(e){toast(e.message,"error")}}
 }
 async function adminParents(panel,params={}){const r=await adminGet("parents",{page:1,pageSize:100,...params}),students=(await adminGet("students",{page:1,pageSize:200})).data||[];const rows=r.data||[];panel.innerHTML='<div class="section-head"><div><p class="section-label">Parents</p><h2>Manage Parents</h2><p class="muted">Create parent portal accounts, update contact details and link parents to their children.</p></div><div class="admin-list-tools"><input id="parent-search" placeholder="Search name, email or phone"><select id="parent-status-filter"><option value="">All statuses</option><option value="active">Active</option><option value="disabled">Disabled</option></select><button class="btn btn-outline" id="export-parents">⇩ CSV</button><button class="btn navy-btn" id="add-parent">+ Add Parent</button></div></div>'+table(["Name","Email","Phone","Children","Status","Actions"],rows.map(x=>'<tr><td>'+esc(x.full_name||"—")+'</td><td>'+esc(x.email||"—")+'</td><td>'+esc(x.phone||"—")+'</td><td>'+esc((x.children||[]).map(s=>s.full_name).join(", ")||"None")+'</td><td>'+pill(x.status||"active")+'</td><td><button class="btn btn-sm btn-outline edit-parent" data-id="'+x.id+'">Edit</button> <button class="btn btn-sm danger-btn delete-parent" data-id="'+x.id+'">Delete</button></td></tr>').join(""));const search=document.querySelector("#parent-search"),status=document.querySelector("#parent-status-filter");const reload=()=>adminParents(panel,{q:search.value,status:status.value});search.oninput=()=>{clearTimeout(window.__parentSearchTimer);window.__parentSearchTimer=setTimeout(reload,300)};status.onchange=reload;document.querySelector("#add-parent").onclick=()=>parentModal(students);document.querySelectorAll(".edit-parent").forEach(b=>b.onclick=()=>parentModal(students,rows.find(x=>x.id===b.dataset.id)));document.querySelectorAll(".delete-parent").forEach(b=>b.onclick=async()=>{if(!await confirmAction("Delete this parent account?",{title:"Delete parent account",confirmText:"Delete",danger:true}))return;try{await adminPost({type:"parent",action:"delete",id:b.dataset.id});toast("Parent deleted.","success");adminParents(panel)}catch(e){toast(e.message,"error")}});document.querySelector("#export-parents").onclick=()=>csvDownload("parents.csv",[["Name","Email","Phone","Children","Status"],...rows.map(x=>[x.full_name,x.email,x.phone,(x.children||[]).map(s=>s.full_name).join(", "),x.status])]);}
 function parentModal(students,x={}){
