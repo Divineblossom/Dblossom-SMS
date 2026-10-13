@@ -8,7 +8,7 @@ import {getSupabase,esc} from "./supabase.js";const $=s=>document.querySelector(
    const slides=(gallery.data||[]).filter(x=>x.image_url).map(x=>({image:x.image_url,title:x.title||"D’Blossom School Life",alt:x.alt_text||x.title||"D’Blossom Model School"}));
    if(!slides.length)slides.push({image:"/schoolimage.jpg",title:"D’Blossom Model School",alt:"D’Blossom Model School"});
    gc.innerHTML='<div class="home-gallery-carousel" aria-label="School gallery slideshow"><div class="home-gallery-viewport"><div class="home-gallery-track">'+slides.map(x=>'<article class="home-gallery-slide"><img loading="lazy" src="'+esc(x.image)+'" alt="'+esc(x.alt)+'"><div class="home-gallery-caption"><h3>'+esc(x.title)+'</h3></div></article>').join("")+'</div></div></div>';
-   const track=gc.querySelector(".home-gallery-track");let current=0;const move=()=>{if(slides.length>1&&track){current=(current+1)%slides.length;track.style.transform="translateX(-"+(current*100)+"%)"}};if(slides.length>1)setInterval(move,5200);
+   const track=gc.querySelector(".home-gallery-track");let current=0;const move=()=>{if(slides.length>1&&track){current=(current+1)%slides.length;track.style.transform="translateX(-"+(current*100)+"%)"}};if(slides.length>1)setInterval(move,1100);
    gc.querySelectorAll(".home-gallery-slide img").forEach(image=>image.addEventListener("error",()=>{const src=image.getAttribute("src")||"";if(!src.endsWith("/schoolimage.jpg")&&src!=="/schoolimage.jpg"){image.src="/schoolimage.jpg";image.alt="D’Blossom Model School"}else if(!src.endsWith("/logo.jpeg")){image.src="/logo.jpeg";image.alt="D’Blossom Model School logo"}else{image.style.display="none"}}));
   }
   if(ec){
