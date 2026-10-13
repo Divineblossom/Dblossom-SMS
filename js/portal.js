@@ -16,7 +16,7 @@ const api=async(path,options={})=>{const token=role==="admin"?await adminSession
 const setBusy=(b,on,label)=>{if(!b)return;b.disabled=on;if(on)b.dataset.old=b.textContent;b.textContent=on?label:(b.dataset.old||b.textContent)};
 const val=(form,n)=>String(new FormData(form).get(n)||"").trim();
 const grade=t=>t>=70?"A":t>=60?"B":t>=50?"C":t>=40?"D":"F";
-const pill=(s)=>'<span class="pill pill-'+String(s||"").toLowerCase().replace(/\\s/g,"-")+'">'+esc(s||"—")+'</span>';
+const pill=(s)=>'<span class="pill pill-'+String(s||"").toLowerCase().replace(/\s/g,"-")+'">'+esc(s||"—")+'</span>';
 const modal=(title,body)=>{document.querySelector("#portal-modal")?.remove();const d=document.createElement("div");d.id="portal-modal";d.className="modal-backdrop";d.innerHTML='<div class="modal-card"><div class="section-head"><h2>'+esc(title)+'</h2><button class="icon-btn" id="modal-close" aria-label="Close">✕</button></div>'+body+'</div>';document.body.append(d);document.querySelector("#modal-close").onclick=()=>d.remove();return d};
 const formHtml=(fields,submit="Save")=>'<form id="modal-form" class="form-grid">'+fields.join("")+'<div class="form-actions"><button type="button" class="btn btn-outline" id="modal-cancel">Cancel</button><button class="btn navy-btn" type="submit">'+submit+'</button></div></form>';
 const input=(name,label,value="",type="text",req=false,extra="")=>'<label class="field">'+esc(label)+(req?" *":"")+'<input name="'+name+'" type="'+type+'" value="'+esc(value)+'" '+(req?"required ":"")+extra+'></label>';
@@ -187,7 +187,7 @@ function studentDetailsModal(x={}){
  m.querySelector("#student-details-close").onclick=()=>m.remove();
 }
 function studentModal(classes,x={}){
- const rawFirstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const rawFirstName=(String(x.full_name||"").trim().split(/\s+/).filter(Boolean)[0]||"");
  const firstName=rawFirstName?(rawFirstName.length>=6?rawFirstName:rawFirstName+"123"):"";
  const hasLogin=Boolean(x.id&&x.profile_id);
  const passwordFields=[
@@ -198,7 +198,7 @@ function studentModal(classes,x={}){
  const form=m.querySelector("#modal-form"),password=form.querySelector('[name="password"]'),name=form.querySelector('[name="full_name"]'),apply=form.querySelector('[name="change_password"]');
  let passwordTouched=false;
  password?.addEventListener("input",()=>{passwordTouched=true;if(apply)apply.checked=true});
- name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
+ name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
  m.querySelector("#modal-cancel").onclick=()=>m.remove();
  form.onsubmit=async e=>{e.preventDefault();try{
    const d=Object.fromEntries(new FormData(form));
@@ -219,7 +219,7 @@ async function adminTeachers(panel){
  document.querySelector("#export-teachers").onclick=()=>csvDownload("teachers.csv",[["Full Name","Staff ID","Email","Phone","Subject","Role","Assigned Class","Status"],...r.data.map(x=>[x.full_name,x.staff_id,x.email,x.phone,x.subject_name,x.role,x.class_name,x.status])]);adminSectionTools(panel,"Search teachers...",["Active","Disabled","Class Teacher","Teaching Staff"]);
 }
 function teacherModal(classes,subjects,x={}){
- const rawFirstName=(String(x.full_name||"").trim().split(/\\s+/).filter(Boolean)[0]||"");
+ const rawFirstName=(String(x.full_name||"").trim().split(/\s+/).filter(Boolean)[0]||"");
  const firstName=rawFirstName?(rawFirstName.length>=6?rawFirstName:rawFirstName+"123"):"";
  const hasLogin=Boolean(x.id&&x.profile_id);
  const m=modal(x.id?"Edit Teacher":"Add Teacher",formHtml([
@@ -237,7 +237,7 @@ function teacherModal(classes,subjects,x={}){
  const form=m.querySelector("#modal-form"),password=form.querySelector('[name="password"]'),name=form.querySelector('[name="full_name"]'),apply=form.querySelector('[name="change_password"]');
  let passwordTouched=false;
  password?.addEventListener("input",()=>{passwordTouched=true;if(apply)apply.checked=true});
- name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
+ name?.addEventListener("input",()=>{if(!passwordTouched&&password){const first=(name.value.trim().split(/\s+/).filter(Boolean)[0]||"");password.value=first?(first.length>=6?first:first+"123"):"";}});
  m.querySelector("#modal-cancel").onclick=()=>m.remove();
  form.onsubmit=async e=>{e.preventDefault();try{
    const d=Object.fromEntries(new FormData(form));
