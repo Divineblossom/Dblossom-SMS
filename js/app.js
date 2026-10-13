@@ -9,7 +9,7 @@ import {getSupabase,esc} from "./supabase.js";const $=s=>document.querySelector(
    if(!slides.length)slides.push({image:"/schoolimage.jpg",title:"D’Blossom Model School",alt:"D’Blossom Model School"});
    gc.innerHTML='<div class="home-gallery-carousel" aria-label="School gallery slideshow"><div class="home-gallery-viewport"><div class="home-gallery-track">'+slides.map(x=>'<article class="home-gallery-slide"><img loading="lazy" src="'+esc(x.image)+'" alt="'+esc(x.alt)+'"><div class="home-gallery-caption"><h3>'+esc(x.title)+'</h3></div></article>').join("")+'</div></div></div>';
    const track=gc.querySelector(".home-gallery-track");let current=0;const move=()=>{if(slides.length>1&&track){current=(current+1)%slides.length;track.style.transform="translateX(-"+(current*100)+"%)"}};if(slides.length>1)setInterval(move,5200);
-   const firstImage=gc.querySelector("img");if(firstImage)firstImage.addEventListener("error",()=>{if(firstImage.getAttribute("src")!=="/schoolimage.jpg"){firstImage.src="/schoolimage.jpg";firstImage.alt="D’Blossom Model School"}} ,{once:true});
+   gc.querySelectorAll(".home-gallery-slide img").forEach(image=>image.addEventListener("error",()=>{if(image.getAttribute("src")!=="/schoolimage.jpg"){image.src="/schoolimage.jpg";image.alt="D’Blossom Model School"}},{once:true}));
   }
   if(ec){
    if(events.error)ec.innerHTML='<p class="notice">The school events calendar is temporarily unavailable. Please try again later.</p>';
