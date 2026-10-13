@@ -271,3 +271,11 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 #admission-form .admission-actions .btn-outline-print:hover{background:rgba(245,190,40,.12)!important}
 .footer-grid{grid-template-columns:1.5fr 1fr 1.4fr}
 @media(min-width:1024px){.menu-button{display:none}.mobile-nav{display:none!important}}
+
+/* Requested public-site visual consistency; isolated to public website styles. */
+.section-heading{border-left:0!important;padding-left:0!important}
+.section-heading::before,.section-label::after,.section-label:after,.section-title-block::after{content:none!important;display:none!important}
+#admission-form .admission-actions .btn-gold{background:#f4c542!important;color:#172033!important;border:1px solid #d6a72c!important}
+#admission-form .admission-actions .btn-outline-print{background:transparent!important;color:var(--navy)!important;border:2px solid #d6a72c!important}
+#admission-form .admission-actions .btn-outline-print:hover{background:rgba(244,197,66,.12)!important}
+.contact-home .contact-actions .btn-gold,.contact-home .contact-form-card .btn-gold{background:#f4c542!important;color:#172033!important;border:1px solid #d6a72c!important}
