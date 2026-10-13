@@ -250,3 +250,24 @@ button:not(:disabled),.btn,input[type=button]:not(:disabled),input[type=submit]:
 button:disabled,.btn:disabled,input:disabled{opacity:.62!important;cursor:not-allowed}
 button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[type=submit]:focus-visible{outline:3px solid #f4c542!important;outline-offset:3px!important}
 .school-whatsapp-float{filter:none!important;opacity:1!important;visibility:visible!important}
+
+
+/* Targeted DBMS homepage fixes. */
+.brand img,.footer-logo,.admission-logo,.portal-login-brand img{object-fit:contain;background:#fff}
+.desktop-nav{display:flex;align-items:center;gap:20px;font-size:14px;color:#334155}
+.desktop-nav>a{padding:10px 0}
+.desktop-nav .nav-menu{position:relative}
+.desktop-nav .nav-menu summary{list-style:none;cursor:pointer;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-weight:700;color:var(--navy)}
+.desktop-nav .nav-menu summary::-webkit-details-marker{display:none}
+.desktop-nav .nav-menu[open] .dropdown{display:block;z-index:100}
+.desktop-nav .dropdown{min-width:230px;top:calc(100% + 8px)}
+.desktop-nav .dropdown .nav-enrol{margin-top:4px;text-align:center}
+.section-heading{border-left:0!important;padding-left:0!important}
+.section-heading::before,.section-label:after,.section-heading .section-label:after{display:none!important;content:none!important}
+.school-identity-card{background-image:linear-gradient(135deg,rgba(7,23,51,.9),rgba(7,23,51,.55)),url('/schoolimage.jpg');background-position:center;background-size:cover;background-repeat:no-repeat}
+.contact-actions .btn-gold,.contact-form-card .btn-gold{background:var(--gold)!important;color:var(--ink)!important;border:1px solid var(--gold)!important}
+#admission-form .admission-actions button.btn-gold{background:var(--gold)!important;color:var(--ink)!important;border:1px solid var(--gold)!important}
+#admission-form .admission-actions .btn-outline-print{background:transparent!important;color:var(--navy)!important;border:2px solid var(--gold)!important}
+#admission-form .admission-actions .btn-outline-print:hover{background:rgba(245,190,40,.12)!important}
+.footer-grid{grid-template-columns:1.5fr 1fr 1.4fr}
+@media(min-width:1024px){.menu-button{display:none}.mobile-nav{display:none!important}}

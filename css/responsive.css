@@ -1,3 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');@media(max-width:1023px){.desktop-nav{display:none}.menu-button{display:block}.mobile-nav{position:absolute;top:80px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:16px;box-shadow:0 10px 30px rgb(15 23 42/.1)}.mobile-nav.open{display:grid;gap:4px}.mobile-nav>a,.mobile-nav summary{padding:12px;border-radius:6px}.mobile-nav details>a{display:block;padding:9px 12px;margin-left:12px;color:#475569}.hero-grid{grid-template-columns:1fr}.hero-card{display:none}.cards.three{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.section{padding-block:72px}.page-body{grid-template-columns:1fr}.page-nav .links{display:none}.dashboard-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}@media(max-width:600px){.brand-name{font-size:14px;line-height:1.15}.container{width:min(100% - 1.25rem,1180px)}.hero h1{font-size:2.9rem}.hero-text{font-size:16px;line-height:1.8}.section h2{font-size:32px}.cards.three,.stats{grid-template-columns:1fr}.dashboard-header .row{align-items:flex-start;flex-direction:column}.dashboard-shell{width:min(100% - 1.25rem,1200px)}.login-card{padding:24px}.page-nav .actions .teacher-action{display:none}}
 @media(max-width:900px){.admin-sidebar{display:none}.admin-content{padding:16px;padding-bottom:88px}.admin-bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--border);overflow-x:auto;padding:6px 4px;box-shadow:0 -5px 18px rgb(15 23 42/.08)}.admin-bottom-nav .admin-tab{min-width:74px;flex:0 0 74px;justify-content:center;flex-direction:column;gap:2px;text-align:center;padding:7px 4px;margin:0;font-size:10px}.admin-bottom-nav .admin-tab span{font-size:16px}.result-filters{grid-template-columns:1fr 1fr}.report-info{grid-template-columns:1fr 1fr}.admin-card-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.portal-top{padding:48px 16px 76px}.portal-top h1{font-size:2.5rem}.login-card{margin:-26px auto 30px;padding:24px}.portal-head-row{align-items:flex-start;flex-direction:column}.portal-dashboard-header{padding:24px 16px}.result-filters{grid-template-columns:1fr}.report-wrap{padding:14px}.report-header{flex-direction:column}.report-header h2{font-size:18px}.report-info{grid-template-columns:1fr 1fr}.report-summary{grid-template-columns:1fr}.admin-card-grid{grid-template-columns:1fr}.inline-form{flex-direction:column}.data-table{min-width:720px}}
+
+
+/* Mobile-first navigation and portal layout safeguards. */
+@media(max-width:1023px){
+ .desktop-nav{display:none!important}
+ .menu-button{display:block;flex:0 0 auto}
+ .nav-wrap{gap:10px}
+ .brand{min-width:0;max-width:calc(100% - 96px)}
+ .brand-name{overflow-wrap:anywhere}
+ .mobile-nav{z-index:110;max-height:calc(100vh - 80px);overflow-y:auto}
+ .mobile-nav a{min-height:44px;display:flex;align-items:center}
+ .hero-card.school-identity-card{display:flex}
+}
+@media(min-width:1024px){
+ .desktop-nav{display:flex}
+ .menu-button{display:none}
+ .mobile-nav{display:none!important}
+}
+@media(max-width:600px){
+ html,body{max-width:100%;overflow-x:hidden}
+ .portal-dashboard-header .portal-head-row{display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;gap:10px}
+ .portal-dashboard-header .portal-head-row>div:first-child{flex:1 1 100%;min-width:0}
+ .portal-dashboard-header .portal-head-row>button{flex:1 1 auto;min-width:0;min-height:44px;padding:10px 12px}
+ .portal-dashboard-header .portal-head-row h1{font-size:clamp(1.25rem,5vw,1.8rem);overflow-wrap:anywhere}
+ .dashboard-shell{width:calc(100% - 16px);max-width:100%;margin-inline:auto}
+ .dashboard-card,.admin-content,.portal-login-card{min-width:0;max-width:100%}
+ .table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .data-table{min-width:680px}
+ .form-grid,.field-grid,.admission-field-grid{grid-template-columns:minmax(0,1fr)}
+ input,select,textarea,button,.btn{max-width:100%}
+ .contact-actions,.admission-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+ .contact-actions .btn,.admission-actions .btn{width:100%;min-width:0}
+ .footer-grid{grid-template-columns:1fr}
+}
