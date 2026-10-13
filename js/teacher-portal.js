@@ -38,6 +38,7 @@ export async function renderTeacherPortal(dashboardView,shell){
    finally{notificationButton.disabled=false}
   });
  }
+ const teacherMenu=document.querySelector("#teacher-menu-toggle"),teacherMenuPanel=document.querySelector("#teacher-header-menu");teacherMenu?.addEventListener("click",()=>{const opening=teacherMenuPanel?.hidden??true;if(teacherMenuPanel)teacherMenuPanel.hidden=!opening;teacherMenu?.setAttribute("aria-expanded",String(opening))});teacherMenuPanel?.querySelectorAll(".teacher-tab").forEach(b=>b.addEventListener("click",()=>{if(teacherMenuPanel)teacherMenuPanel.hidden=true;teacherMenu?.setAttribute("aria-expanded","false")}));
  const buttons=document.querySelectorAll(".teacher-tab");
  const open=async tab=>{buttons.forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));try{await renderTab(tab,panel,t,p)}catch(e){panel.innerHTML='<div class="notice danger">'+esc(e.message)+"</div>"}};
  buttons.forEach(b=>b.onclick=()=>open(b.dataset.tab));await open("dashboard");
