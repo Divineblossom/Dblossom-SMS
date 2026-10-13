@@ -25,7 +25,7 @@ export async function renderTeacherPortal(dashboardView,shell){
   notificationButton.type="button";
   notificationButton.id="enable-teacher-browser-notifications";
   notificationButton.className="btn btn-outline-light portal-notification-button";
-  notificationButton.textContent="🔔 Enable notifications";
+  notificationButton.textContent="🔔 Alerts";
   notificationButton.title="Enable alerts when parents send you messages";
   const logoutButton=headerActions.querySelector("#logout");
   headerActions.insertBefore(notificationButton,logoutButton||null);
@@ -33,7 +33,7 @@ export async function renderTeacherPortal(dashboardView,shell){
    const original=notificationButton.textContent;
    notificationButton.disabled=true;
    notificationButton.textContent="Enabling…";
-   try{await enableBrowserNotifications("teacher",getSession);notificationButton.textContent="✓ Notifications enabled";toast("Browser notifications are enabled on this device.","success")}
+   try{await enableBrowserNotifications("teacher",getSession);notificationButton.textContent="✓ Alerts on";toast("Browser notifications are enabled on this device.","success")}
    catch(e){notificationButton.textContent=original;toast(e.message||"Could not enable browser notifications.","error")}
    finally{notificationButton.disabled=false}
   });
