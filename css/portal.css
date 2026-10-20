@@ -248,3 +248,8 @@ button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
   border:1px solid #dbe4ef;
   background:#f1f5f9;
 }
+
+
+/* Force compact 36px gallery thumbnails in admin rows. */
+.portal-page .admin-gallery-row-thumb{display:block!important;width:36px!important;height:36px!important;min-width:36px;object-fit:cover;object-position:center;border-radius:5px;border:1px solid #dbe4ef;background:#f1f5f9}
+.portal-page #admin-main table.data-table td:first-child{vertical-align:middle}
