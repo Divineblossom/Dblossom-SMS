@@ -295,6 +295,7 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 @media(prefers-reduced-motion:reduce){.board-member-card{transition:none}.board-member-card:hover{transform:none}}
 
 
-/* Homepage background framing: prioritize the students in the lower part of background.jpg. */
-.hero{background-size:cover!important;background-position:center 76%!important;background-repeat:no-repeat!important}
+/* Homepage background: use background.jpeg and frame the students clearly. */
+.hero{background-image:url('/background.jpeg')!important;background-size:cover!important;background-position:center 76%!important;background-repeat:no-repeat!important}
+.hero-overlay{background:transparent!important}
 @media(max-width:760px){.hero{background-position:center 72%!important;background-size:cover!important}}
