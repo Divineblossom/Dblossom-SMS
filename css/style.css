@@ -159,7 +159,7 @@ body{background:#fbfcfd;color:var(--ink);line-height:1.6}
 .hero{background-image:linear-gradient(90deg,rgba(5,18,31,.96),rgba(5,18,31,.55)),url('/school-building.jpg');background-size:cover;background-position:center}
 /* Final premium school-site pass */
 .hero{background:#0b1f33}
-.hero-overlay{background:linear-gradient(90deg,rgba(5,18,31,.96),rgba(5,18,31,.55))}
+.hero-overlay{background:transparent!important}
 .hero-accent{position:absolute;border:1px solid rgba(201,154,61,.25);border-radius:50%;pointer-events:none}
 .hero-accent-one{width:520px;height:520px;right:-180px;top:-140px}
 .hero-accent-two{width:260px;height:260px;right:210px;bottom:-150px}
@@ -188,8 +188,8 @@ body{background:#fbfcfd;color:var(--ink);line-height:1.6}
 @media(max-width:600px){.school-identity-card{min-height:330px;padding:28px}.school-mark{width:76px;height:76px;margin-bottom:18px}.school-identity-card h2{font-size:2rem}.identity-line{font-size:10px}.hero-grid{padding-block:64px}.floating-whatsapp{right:14px;bottom:14px}}
 
 /* Final professional public-site polish */
-.hero{background-image:linear-gradient(90deg,rgba(5,18,31,.88),rgba(5,18,31,.50)),url('/background.jpg')!important;background-color:#0b1f33!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}
-.hero::after{content:"";position:absolute;inset:auto 0 0;height:180px;background:linear-gradient(to bottom,transparent,rgba(11,31,51,.22));pointer-events:none}
+.hero{background-image:url('/background.jpg')!important;background-color:transparent!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}
+.hero::after{content:none!important}
 .section-heading{position:relative;padding-left:18px}
 .section-heading::before{content:"";position:absolute;left:0;top:4px;width:3px;height:44px;background:var(--gold);border-radius:3px}
 .section-heading p:last-child{max-width:680px;color:#667583;line-height:1.8}
