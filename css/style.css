@@ -293,3 +293,8 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 .board-member-card h3{margin:0;color:var(--navy);font-size:clamp(17px,2vw,21px);line-height:1.4}
 @media(max-width:600px){.board-members-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.board-member-card{padding:12px;border-radius:12px}.board-member-photo{aspect-ratio:3/4;margin-bottom:12px;border-radius:9px}.board-member-card h3{font-size:14px;overflow-wrap:anywhere}}
 @media(prefers-reduced-motion:reduce){.board-member-card{transition:none}.board-member-card:hover{transform:none}}
+
+
+/* Homepage background framing: prioritize the students in the lower part of background.jpg. */
+.hero{background-size:cover!important;background-position:center 76%!important;background-repeat:no-repeat!important}
+@media(max-width:760px){.hero{background-position:center 72%!important;background-size:cover!important}}
