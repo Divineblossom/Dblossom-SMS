@@ -279,3 +279,17 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 #admission-form .admission-actions .btn-outline-print{background:transparent!important;color:var(--navy)!important;border:2px solid #d6a72c!important}
 #admission-form .admission-actions .btn-outline-print:hover{background:rgba(244,197,66,.12)!important}
 .contact-home .contact-actions .btn-gold,.contact-home .contact-form-card .btn-gold{background:#f4c542!important;color:#172033!important;border:1px solid #d6a72c!important}
+
+
+/* Board Members — homepage section */
+.board-members-section{background:#f7f9fb}
+.board-members-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:920px;margin:0 auto}
+.board-member-card{min-width:0;overflow:hidden;text-align:center;background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgb(15 23 42/.05);transition:transform .2s ease,box-shadow .2s ease}
+.board-member-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgb(15 23 42/.1)}
+.board-member-photo{width:100%;max-width:300px;aspect-ratio:4/3;margin:0 auto 18px;overflow:hidden;border-radius:12px;background:#e9eef4;display:grid;place-items:center}
+.board-member-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.board-member-photo img[hidden],.board-member-photo-placeholder[hidden]{display:none}
+.board-member-photo-placeholder{width:100%;height:100%;display:grid;place-items:center;padding:12px;color:#64748b;font-size:14px;font-weight:600;background:linear-gradient(135deg,#edf2f7,#dfe7f0)}
+.board-member-card h3{margin:0;color:var(--navy);font-size:clamp(17px,2vw,21px);line-height:1.4}
+@media(max-width:600px){.board-members-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.board-member-card{padding:12px;border-radius:12px}.board-member-photo{aspect-ratio:3/4;margin-bottom:12px;border-radius:9px}.board-member-card h3{font-size:14px;overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){.board-member-card{transition:none}.board-member-card:hover{transform:none}}
