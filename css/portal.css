@@ -236,3 +236,23 @@ button:disabled,.btn:disabled{opacity:.62!important;cursor:not-allowed}
 .portal-header-menu button:hover,.parent-header-menu a:hover{background:#eff6ff;border-color:#bfdbfe;}
 @media(max-width:680px){.portal-dashboard-header{padding:14px 10px!important}.portal-head-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px}.portal-head-row>div:first-child{flex:1 1 100%;min-width:0}.portal-head-actions{flex:1 1 100%;width:100%;display:flex;flex-wrap:nowrap;gap:7px;overflow-x:auto;overflow-y:hidden;padding:1px 0 5px;-webkit-overflow-scrolling:touch}.portal-head-actions .btn{min-height:42px;padding:8px 11px;font-size:13px;white-space:nowrap}.portal-head-actions #logout{margin-left:auto}.portal-header-menu,.parent-header-menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.portal-header-menu button,.parent-header-menu a{font-size:13px;padding:9px;min-height:42px}.portal-head-row .portal-head-actions>div{flex:0 0 auto;width:auto}.parent-header-menu{margin-bottom:10px}}
 @media(max-width:380px){.portal-header-menu,.parent-header-menu{grid-template-columns:minmax(0,1fr)}.portal-head-actions .btn{padding:8px 9px;font-size:12px}}
+
+
+/* Admin sidebar: only the currently selected section is blue. */
+.portal-page #admin-sidebar button[data-section]{
+  background:#fff!important;
+  color:#334155!important;
+  border:1px solid #e2e8f0!important;
+  font-weight:650!important;
+}
+.portal-page #admin-sidebar button[data-section]:hover:not(.active){
+  background:#f8fafc!important;
+  color:#17375e!important;
+  border-color:#cbd5e1!important;
+}
+.portal-page #admin-sidebar button[data-section].active{
+  background:#2563eb!important;
+  color:#fff!important;
+  border-color:#2563eb!important;
+  font-weight:800!important;
+}
