@@ -89,7 +89,9 @@ jobs:
             for(const m of html.matchAll(/(?:href|src)=(["'])(.*?)\1/gi)){
               const value=m[2];
               if(!value || /^(https?:|mailto:|tel:|javascript:|data:|#)/i.test(value) || /(?:\+esc\(|\+x\.|\$\{)/.test(value)) continue;
-              const clean=value.split('?')[0].split('#')[0];
+              const rawClean=value.split('?')[0].split('#')[0];
+              let clean;
+              try{clean=decodeURIComponent(rawClean)}catch{clean=rawClean}
               if(!clean) continue;
               let target;
               if(clean.startsWith('/')) target=path.join(root,clean);
