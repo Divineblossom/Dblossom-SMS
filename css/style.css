@@ -299,3 +299,6 @@ button:focus-visible,.btn:focus-visible,input[type=button]:focus-visible,input[t
 .hero{background-image:url('/background.jpeg')!important;background-size:cover!important;background-position:center 76%!important;background-repeat:no-repeat!important}
 .hero-overlay{background:transparent!important}
 @media(max-width:760px){.hero{background-position:center 72%!important;background-size:cover!important}}
+
+/* Samzy Technology footer attribution */
+.site-footer .footer-credit{margin:28px 0 0;padding-top:18px;border-top:1px solid rgba(219,234,254,.18);text-align:center;color:#b9c8df;font-size:13px;letter-spacing:.02em}.site-footer .footer-credit a{display:inline-flex;align-items:center;margin:0 0 0 5px;padding:7px 12px;border:1px solid rgba(217,166,46,.55);border-radius:999px;background:#d9a62e;color:#071733;font-weight:800;letter-spacing:.04em;transition:background .2s ease,color .2s ease,transform .2s ease}.site-footer .footer-credit a:hover{background:#f0c75e;color:#071733;transform:translateY(-1px)}.site-footer .footer-credit a:focus-visible{outline:3px solid #fff;outline-offset:3px}
