@@ -1,1 +1,89 @@
-body[data-role="admin"] .portal-login{position:relative;overflow:hidden;background:radial-gradient(ellipse at 14% 15%,rgba(50,111,176,.24),transparent 42%),linear-gradient(135deg,#0d2038 0%,#17375e 58%,#102945 100%);padding:28px}body[data-role="admin"] .portal-login:before,body[data-role="admin"] .portal-login:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.1);border-radius:50%;pointer-events:none}body[data-role="admin"] .portal-login:before{width:520px;height:520px;right:-190px;top:-220px}body[data-role="admin"] .portal-login:after{width:360px;height:360px;left:-180px;bottom:-210px}body[data-role="admin"] .portal-login-card{z-index:1;width:min(100%,490px);padding:clamp(28px,5vw,42px);border:1px solid rgba(255,255,255,.72);border-radius:22px;background:#fff;box-shadow:0 28px 90px rgba(2,12,27,.32);overflow:hidden}body[data-role="admin"] .portal-login-card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#17375e,#3679b9,#d7a93b)}body[data-role="admin"] .portal-login-brand{text-align:left;margin:0 0 27px;padding-bottom:22px;border-bottom:1px solid #e8edf4}body[data-role="admin"] .portal-login-brand img{width:64px;height:64px;border:1px solid #e7edf5;border-radius:15px;padding:5px}body[data-role="admin"] .portal-login-brand h1{margin:8px 0 5px;color:#17375e;font-size:clamp(24px,4vw,30px);letter-spacing:-.035em}body[data-role="admin"] .portal-login-brand p:not(.portal-eyebrow){color:#64748b;font-size:14px}body[data-role="admin"] .portal-login-brand .portal-eyebrow{font-size:10px;letter-spacing:.16em}body[data-role="admin"] .portal-login-card h2{text-align:left;color:#172b45;font-size:22px;letter-spacing:-.025em}body[data-role="admin"] .portal-login-card>.portal-intro{text-align:left;color:#64748b}body[data-role="admin"] .portal-login-form{margin-top:22px}body[data-role="admin"] .portal-field>span{font-size:13px;color:#263b55}body[data-role="admin"] .portal-field input{min-height:50px;border-radius:11px;background:#f8fafc}body[data-role="admin"] .portal-login-btn{min-height:51px;border-radius:11px;background:linear-gradient(100deg,#17375e,#2867a6);box-shadow:0 8px 18px rgba(23,55,94,.18);letter-spacing:.01em}body[data-role="admin"] .portal-login-btn:hover{filter:brightness(1.07)}body[data-role="admin"] .portal-back{font-size:13px;font-weight:650;color:#315f91}@media(max-width:520px){body[data-role="admin"] .portal-login{padding:16px}body[data-role="admin"] .portal-login-card{padding:30px 22px 24px}}
+/* Compact, centered administrator sign-in card. */
+body[data-role="admin"]{min-height:100vh;background:#f2f5fa}
+body[data-role="admin"] .portal-login{
+  min-height:100svh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  padding:76px 18px 28px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 15% 12%,rgba(50,111,176,.13),transparent 42%),
+             linear-gradient(145deg,#eef3f9 0%,#f8fafc 54%,#eaf0f7 100%);
+}
+body[data-role="admin"] .portal-login:before,
+body[data-role="admin"] .portal-login:after{
+  content:"";position:absolute;border:1px solid rgba(23,55,94,.07);border-radius:50%;pointer-events:none
+}
+body[data-role="admin"] .portal-login:before{width:440px;height:440px;right:-230px;top:-210px}
+body[data-role="admin"] .portal-login:after{width:360px;height:360px;left:-210px;bottom:-190px}
+body[data-role="admin"] .portal-login-card{
+  position:relative;z-index:1;isolation:isolate;width:min(100%,410px);box-sizing:border-box;
+  margin:0;padding:54px 30px 25px;border:1px solid #e0e7ef;border-radius:18px;
+  background:#fff;box-shadow:0 18px 55px rgba(15,35,60,.12);overflow:visible
+}
+body[data-role="admin"] .portal-login-brand{
+  position:static;text-align:center;margin:0 0 17px;padding:0;border:0
+}
+body[data-role="admin"] .admin-login-logo{
+  position:absolute;left:50%;top:-43px;transform:translateX(-50%);
+  display:grid;place-items:center;width:82px;height:82px;padding:6px;box-sizing:border-box;
+  border:5px solid #fff;border-radius:50%;background:#fff;
+  box-shadow:0 5px 18px rgba(15,35,60,.16)
+}
+body[data-role="admin"] .admin-login-logo img{
+  display:block;width:100%;height:100%;object-fit:contain;border-radius:50%;padding:0;border:0;background:#fff
+}
+body[data-role="admin"] .portal-login-brand .portal-eyebrow{
+  margin:0 0 7px;color:#64748b;font-size:9px;line-height:1.4;font-weight:800;letter-spacing:.14em
+}
+body[data-role="admin"] .portal-login-brand h1{
+  margin:0;color:#17375e;font-family:Inter,Arial,sans-serif;font-size:24px;line-height:1.25;
+  font-weight:800;letter-spacing:-.035em
+}
+body[data-role="admin"] .admin-login-heading{text-align:center}
+body[data-role="admin"] .admin-login-heading h2{
+  margin:0 0 5px;color:#172b45;font-family:Inter,Arial,sans-serif;font-size:17px;font-weight:750
+}
+body[data-role="admin"] .admin-login-heading .portal-intro{
+  margin:0;color:#64748b;font-size:13px;line-height:1.5;text-align:center
+}
+body[data-role="admin"] .portal-login-form{display:grid;gap:13px;margin-top:19px}
+body[data-role="admin"] .portal-field{display:block;margin:0;text-align:center}
+body[data-role="admin"] .portal-field>span:first-child{
+  display:block;margin:0 0 6px;color:#334155;font-size:12px;font-weight:750;text-align:center
+}
+body[data-role="admin"] .portal-field input{
+  display:block;width:100%;min-height:46px;box-sizing:border-box;padding:11px 42px 11px 12px;
+  border:1px solid #d5deea;border-radius:10px;background:#f9fbfd;color:#172033;
+  font:inherit;font-size:14px;text-align:center;outline:none
+}
+body[data-role="admin"] .portal-field input:focus{
+  border-color:#3975b5;box-shadow:0 0 0 3px rgba(37,99,235,.11);background:#fff
+}
+body[data-role="admin"] .portal-password{position:relative;display:block;width:100%}
+body[data-role="admin"] .portal-password input{padding-right:66px}
+body[data-role="admin"] .portal-show{
+  position:absolute;right:7px;top:50%;transform:translateY(-50%);min-width:48px;
+  border:0;border-radius:7px;padding:7px 6px;background:transparent;color:#24598e;
+  font-size:12px;font-weight:800;cursor:pointer;box-shadow:none
+}
+body[data-role="admin"] .portal-show:hover{background:#eaf1f9}
+body[data-role="admin"] .portal-login-btn{
+  display:flex;width:100%;min-height:47px;margin:2px 0 0;padding:11px 14px;
+  border:0;border-radius:10px;background:#17375e;color:#fff;font-size:13px;font-weight:800;
+  line-height:1.35;text-align:center;box-shadow:0 5px 13px rgba(23,55,94,.16)
+}
+body[data-role="admin"] .portal-login-btn:hover{background:#214c7d}
+body[data-role="admin"] .portal-login-btn:disabled{opacity:.7;cursor:wait}
+body[data-role="admin"] .portal-status{margin:0;text-align:center;font-size:12px;overflow-wrap:anywhere}
+body[data-role="admin"] .portal-help{
+  margin:13px 0 0;color:#7b8798;font-size:11px;line-height:1.5;text-align:center
+}
+body[data-role="admin"] .portal-back{
+  display:block;margin-top:13px;color:#315f91;font-size:12px;font-weight:700;text-align:center
+}
+@media(max-width:480px){
+  body[data-role="admin"] .portal-login{padding:72px 14px 22px}
+  body[data-role="admin"] .portal-login-card{width:min(100%,380px);padding:51px 21px 22px;border-radius:16px}
+  body[data-role="admin"] .portal-login-brand h1{font-size:22px}
+}
+@media(max-height:620px){
+  body[data-role="admin"] .portal-login{align-items:flex-start;padding-top:62px;padding-bottom:22px}
+  body[data-role="admin"] .portal-login-card{padding-top:48px}
+}
