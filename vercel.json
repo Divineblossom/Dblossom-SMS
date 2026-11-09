@@ -11,6 +11,14 @@
   },
   "rewrites": [
     {
+      "source": "/student-portal",
+      "destination": "/pages/student-login.html"
+    },
+    {
+      "source": "/parent-portal",
+      "destination": "/pages/parent-login.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     }
