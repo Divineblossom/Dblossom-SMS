@@ -2,22 +2,22 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
 (function () {
   "use strict";
   const sections = [
-    {id:"overview",label:"Dashboard Overview"},
-    {id:"students",label:"Students",table:"students"},
-    {id:"teachers",label:"Teachers",table:"teachers"},
-    {id:"results",label:"Results",table:"results"},
-    {id:"promotions",label:"Student Promotions"},
-    {id:"parents",label:"Parents",table:"parents"},
-    {id:"payments",label:"Payments",table:"fee_payments"},
-    {id:"bank-transfers",label:"Bank Transfer Notifications"},
-    {id:"events",label:"Events",table:"events"},
-    {id:"gallery",label:"Gallery",table:"gallery_images"},
-    {id:"contact",label:"Contact Enquiries",table:"contact_messages"},
-    {id:"admissions",label:"Admissions",table:"admission_applications"},
-    {id:"messages",label:"Parent Messages",table:"parent_messages"},
-    {id:"subjects",label:"Subjects",table:"subjects"},
-    {id:"advanced",label:"School Management / Advanced"},
-    {id:"settings",label:"Settings"}
+    {id:"overview",label:"Dashboard Overview",group:"WORKSPACE",icon:"⌂"},
+    {id:"students",label:"Students",table:"students",group:"PEOPLE",icon:"♙"},
+    {id:"teachers",label:"Teachers & Staff",table:"teachers",group:"PEOPLE",icon:"♧"},
+    {id:"parents",label:"Parents",table:"parents",group:"PEOPLE",icon:"♡"},
+    {id:"admissions",label:"Admissions",table:"admission_applications",group:"PEOPLE",icon:"＋"},
+    {id:"results",label:"Results",table:"results",group:"ACADEMICS",icon:"▤"},
+    {id:"promotions",label:"Student Promotions",group:"ACADEMICS",icon:"↗"},
+    {id:"subjects",label:"Subjects",table:"subjects",group:"ACADEMICS",icon:"▣"},
+    {id:"payments",label:"Payments & Finance",table:"fee_payments",group:"FINANCE",icon:"₦"},
+    {id:"bank-transfers",label:"Bank Transfer Notices",group:"FINANCE",icon:"⇄"},
+    {id:"messages",label:"Parent Messages",table:"parent_messages",group:"COMMUNICATION",icon:"✉"},
+    {id:"contact",label:"Contact Enquiries",table:"contact_messages",group:"COMMUNICATION",icon:"☏"},
+    {id:"events",label:"Events",table:"events",group:"SCHOOL CONTENT",icon:"▦"},
+    {id:"gallery",label:"Gallery",table:"gallery_images",group:"SCHOOL CONTENT",icon:"▧"},
+    {id:"advanced",label:"School Structure",group:"SYSTEM",icon:"⚙"},
+    {id:"settings",label:"Settings",group:"SYSTEM",icon:"⚙"}
   ];
   const side=document.getElementById("admin-sidebar"), mobile=document.getElementById("admin-mobile-nav"), main=document.getElementById("admin-main");
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -33,8 +33,15 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
   const api=(payload,method="POST")=>request("/api/admin-operations",{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   function card(title,body){return '<section class="portal-empty-card"><p class="section-label">D’Blossom Administrator Portal</p><h2>'+esc(title)+'</h2>'+body+'</section>'}
   function stat(label,value){return '<article class="portal-stat-card"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></article>'}
-  function navButton(s){const b=document.createElement("button");b.type="button";b.dataset.section=s.id;b.textContent=s.label;b.addEventListener("click",()=>openSection(s.id));return b}
-  sections.forEach(s=>{if(side)side.appendChild(navButton(s));if(mobile)mobile.appendChild(navButton(s))});
+  function navButton(s){const b=document.createElement("button");b.type="button";b.dataset.section=s.id;b.innerHTML='<span class="admin-nav-icon" aria-hidden="true">'+esc(s.icon||"•")+'</span><span class="admin-nav-label">'+esc(s.label)+'</span>';b.addEventListener("click",()=>openSection(s.id));return b}
+  if(side){let currentGroup="";let groupNode=null;sections.forEach(s=>{if(s.group!==currentGroup){currentGroup=s.group;groupNode=document.createElement("div");groupNode.className="admin-nav-group";groupNode.innerHTML='<p class="admin-nav-group-title">'+esc(currentGroup)+'</p>';side.appendChild(groupNode)}groupNode.appendChild(navButton(s))})}
+  if(mobile)sections.forEach(s=>mobile.appendChild(navButton(s)));
+  const themeButton=document.createElement("button");themeButton.type="button";themeButton.className="admin-theme-toggle";themeButton.id="admin-theme-toggle";themeButton.setAttribute("aria-label","Switch dashboard theme");
+  const savedTheme=(()=>{try{return localStorage.getItem("dbms-admin-theme")}catch(_){return null}})();
+  function applyTheme(theme){document.body.dataset.adminTheme=theme;themeButton.textContent=theme==="dark"?"☀ Light mode":"☾ Dark mode";themeButton.setAttribute("aria-label",theme==="dark"?"Switch to light theme":"Switch to dark theme");try{localStorage.setItem("dbms-admin-theme",theme)}catch(_){}}
+  applyTheme(savedTheme==="dark"?"dark":"light");themeButton.addEventListener("click",()=>applyTheme(document.body.dataset.adminTheme==="dark"?"light":"dark"));
+  document.querySelector(".portal-head-actions")?.prepend(themeButton);
+  const dateNode=document.getElementById("admin-current-date");if(dateNode)dateNode.textContent=new Date().toLocaleDateString("en-NG",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   function markActive(id){document.querySelectorAll("[data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===id))}
   function table(headers,rows){if(!rows.length)return '<div class="portal-empty-card"><h3>No data yet</h3><p class="portal-muted">There are no records in this section yet. Use the available Add button when you are ready to create the first record.</p></div>';return '<div class="portal-table-wrap"><table class="data-table"><thead><tr>'+headers.map(h=>"<th>"+esc(h)+"</th>").join("")+"</tr></thead><tbody>"+rows.map(r=>"<tr>"+r.map(v=>"<td>"+(v==null||v===""?"—":v)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"}
   function button(label,action,id,cls="btn btn-outline"){return '<button type="button" class="'+cls+'" data-action="'+esc(action)+'" data-id="'+esc(id||"")+'">'+esc(label)+'</button>'}
@@ -44,7 +51,37 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
   function portalPasswordField(value="",label="Password to set — first name (visible)"){return '<label class="field">'+esc(label)+'<input name="password" type="text" value="'+esc(value)+'" autocomplete="off" autocapitalize="off"></label><p class="portal-muted">For an existing account, this box cannot read the saved password. Type a new password here, or use the reset option below to apply the first name.</p>'}
   function modal(title,fields,saveLabel="Save record"){document.getElementById("admin-modal")?.remove();const wrap=document.createElement("div");wrap.id="admin-modal";wrap.className="modal-backdrop";wrap.innerHTML='<section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title"><div class="section-head"><h2 id="admin-modal-title">'+esc(title)+'</h2><button type="button" class="icon-btn" data-close aria-label="Close">✕</button></div><form id="admin-record-form" class="form-grid">'+fields.join("")+'<div class="form-actions"><button type="button" class="btn btn-outline" data-close>Cancel</button><button type="submit" class="btn navy-btn">'+esc(saveLabel)+'</button></div><p class="portal-muted" id="admin-form-status" role="status"></p></form></section>';document.body.appendChild(wrap);wrap.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>wrap.remove());return wrap}
   async function getRows(tableName){const all=[];let page=1;while(page<=100){const d=await request("/api/admin-operations?table="+encodeURIComponent(tableName)+"&page="+page+"&pageSize=100");const batch=Array.isArray(d.data)?d.data:[];all.push(...batch);const total=Number(d.count||0);if(batch.length<100||all.length>=total)break;page+=1;}return all;}
-  async function loadOverview(){main.innerHTML=card("Dashboard Overview","<p>Loading school data…</p>");try{const d=await request("/api/dashboard-data");const s=d.stats||{};main.innerHTML='<section class="portal-empty-card"><div class="portal-section-heading"><div><p class="section-label">Live school data</p><h2>Dashboard Overview</h2><p class="portal-muted">Statistics returned by the protected server endpoint.</p></div><button class="btn navy-btn" id="refresh-overview" type="button">Refresh</button></div><div class="portal-stats-grid">'+stat("Students",s.students||0)+stat("Teachers",s.teachers||0)+stat("Parents",s.parents||0)+stat("Results",s.results||0)+stat("Announcements",s.announcements||0)+stat("Outstanding fees",money(s.balance))+'</div><p class="portal-muted">Last refreshed '+esc(new Date().toLocaleString("en-NG"))+'. Use the sections to manage records.</p></section>';document.getElementById("refresh-overview").onclick=loadOverview}catch(e){main.innerHTML=card("Dashboard Overview",'<div class="portal-error"><strong>Live data could not be loaded.</strong><p>'+esc(e.message)+'</p><button class="btn navy-btn" id="retry-overview">Try again</button><p class="portal-muted">Verify the Supabase server environment variables and API deployment in Vercel.</p></div>');document.getElementById("retry-overview").onclick=loadOverview}}
+  async function loadOverview(){
+    main.innerHTML=card("Dashboard Overview",'<p class="portal-muted">Loading your live school overview…</p>');
+    try{
+      const d=await request("/api/dashboard-data"),s=d.stats||{};
+      const tiles=[
+        ["Total students",s.students??0,"students","blue","Registered student records"],
+        ["Teachers & staff",s.teachers??0,"teachers","violet","Staff records"],
+        ["Parents",s.parents??0,"parents","teal","Parent accounts"],
+        ["Result records",s.results??0,"results","amber","Academic records"],
+        ["Announcements",s.announcements??0,"advanced","rose","Published school updates"],
+        ["Outstanding balance",money(s.balance),"payments","green","Recorded unpaid balance"]
+      ];
+      const quick=[
+        ["Register a student","students","＋","blue"],["Review admissions","admissions","↗","violet"],
+        ["Verify payments","payments","₦","green"],["Manage attendance","advanced","✓","teal"],
+        ["Publish results","results","▤","amber"],["Message parents","messages","✉","rose"]
+      ];
+      main.innerHTML='<div class="admin-overview-shell">'+
+        '<section class="admin-welcome-panel"><div><span class="admin-panel-kicker">SCHOOL OVERVIEW</span><h2>Welcome back, Administrator</h2><p>Your school at a glance. Review key figures, then jump straight into the work that needs your attention.</p></div><div class="admin-welcome-mark" aria-hidden="true">✦</div></section>'+
+        '<div class="admin-section-title"><div><span class="admin-panel-kicker">LIVE SNAPSHOT</span><h3>School statistics</h3><p>Figures supplied by the secure dashboard endpoint.</p></div><button class="btn navy-btn" id="refresh-overview" type="button">↻ Refresh data</button></div>'+
+        '<div class="admin-overview-stats">'+tiles.map(t=>'<article class="admin-overview-stat '+t[3]+'"><div class="admin-stat-top"><span>'+esc(t[0])+'</span><span class="admin-stat-icon" aria-hidden="true">'+t[2]+'</span></div><strong>'+esc(t[1])+'</strong><small>'+esc(t[4])+'</small></article>').join("")+'</div>'+
+        '<div class="admin-section-title admin-quick-heading"><div><span class="admin-panel-kicker">WORKSPACE SHORTCUTS</span><h3>Quick actions</h3><p>Open a school management area in one click.</p></div></div>'+
+        '<div class="admin-quick-grid">'+quick.map(q=>'<button type="button" class="admin-quick-action '+q[3]+'" data-quick-section="'+q[1]+'"><span class="admin-quick-icon" aria-hidden="true">'+q[2]+'</span><span>'+q[0]+'</span><b aria-hidden="true">→</b></button>').join("")+'</div>'+
+        '<div class="admin-overview-footer"><span class="admin-live-indicator"><i></i> Connected to protected school data</span><span>Last refreshed '+esc(new Date().toLocaleString("en-NG"))+'</span></div></div>';
+      document.getElementById("refresh-overview").onclick=loadOverview;
+      main.querySelectorAll("[data-quick-section]").forEach(b=>b.addEventListener("click",()=>openSection(b.dataset.quickSection)));
+    }catch(e){
+      main.innerHTML=card("Dashboard Overview",'<div class="portal-error"><strong>Live data could not be loaded.</strong><p>'+esc(e.message)+'</p><button class="btn navy-btn" id="retry-overview">Try again</button><p class="portal-muted">The dashboard could not retrieve its protected statistics. No sample figures are displayed.</p></div>');
+      document.getElementById("retry-overview").onclick=loadOverview;
+    }
+  }
   const views={
     students:{title:"Students",cols:["Name","Admission no.","Class","Guardian","Status","Actions"],row:x=>[esc(x.full_name),esc(x.admission_number),esc(x.class_name||"—"),esc(x.guardian_name||"—"),esc(x.status||"active"),button("Edit","edit",x.id)+" "+button("Delete","delete",x.id,"btn btn-outline")],add:"student"},
     teachers:{title:"Teachers",cols:["Name","Staff ID","Class","Subject","Status","Actions"],row:x=>[esc(x.full_name),esc(x.staff_id),esc(x.class_name||x.assigned_class||"—"),esc(x.subject_name||x.subject||"—"),esc(x.status||"active"),button("Edit","edit",x.id)+" "+button("Delete","delete",x.id,"btn btn-outline")],add:"teacher"},
