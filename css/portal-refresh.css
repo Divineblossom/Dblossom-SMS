@@ -390,3 +390,15 @@
  .portal-page .parent-compact-header .portal-brand h1,.portal-page .teacher-compact-header .portal-brand h1{font-size:9px!important}
  .portal-page .parent-compact-actions>*,.portal-page .teacher-compact-actions>*,.portal-page .portal-dashboard-header .portal-head-actions>*{padding:4px 3px!important;font-size:8px!important}
 }
+
+
+/* Parent form: keep the live student search above a scrollable result list. */
+#admin-modal .parent-student-search-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+#admin-modal .parent-student-search-field input{width:100%;min-width:0}
+#admin-modal .admin-student-picker{display:flex;flex-direction:column;gap:7px;max-height:260px;overflow-y:auto;padding:10px;border:1px solid #d7e0eb;border-radius:10px;background:#f8fafc}
+#admin-modal .admin-student-option{display:flex;flex-direction:row;align-items:center;gap:10px;min-width:0;margin:0;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#17324f;cursor:pointer}
+#admin-modal .admin-student-option input{flex:0 0 auto;width:17px;height:17px;margin:0;accent-color:#1769aa}
+#admin-modal .admin-student-option span{min-width:0;overflow-wrap:anywhere}
+#admin-modal .admin-student-option[hidden],#admin-modal .admin-student-empty[hidden]{display:none!important}
+#admin-modal .admin-student-empty{margin:0;padding:12px;border:1px dashed #cbd5e1;border-radius:8px;text-align:center}
+#admin-modal .admin-student-selected{margin:0;padding:9px 10px;border-radius:8px;background:#eef5fb;color:#17324f;overflow-wrap:anywhere}
