@@ -65,7 +65,7 @@ import{alertAction,confirmAction,promptAction}from"./portal-dialogs.js?v=2026101
       ];
       const quick=[
         ["Register a student","students","＋","blue"],["Review admissions","admissions","↗","violet"],
-        ["Verify payments","payments","₦","green"],["Manage attendance","advanced","✓","teal"],
+        ["Verify payments","payments","₦","green"],["Manage classes","advanced","✓","teal"],
         ["Publish results","results","▤","amber"],["Message parents","messages","✉","rose"]
       ];
       main.innerHTML='<div class="admin-overview-shell">'+
