@@ -72,6 +72,23 @@ async function render(){
  }
  const s=await getSession();
  if(!s){loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");return}
+ // A stored session must belong to the portal the visitor actually opened.
+ const sb=await getSupabase();
+ const{data:authData,error:authError}=await sb.auth.getUser();
+ if(authError||!authData?.user){
+  await sb.auth.signOut({scope:"local"}).catch(()=>{});
+  sessionStorage.removeItem("dblossom_student_record_id");
+  loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");return;
+ }
+ const{data:accountProfile,error:profileError}=await sb.from("profiles").select("role").eq("id",authData.user.id).maybeSingle();
+ if(profileError)throw Error("We could not verify this portal account. Please try again.");
+ if(String(accountProfile?.role||"").toLowerCase()!==role){
+  await sb.auth.signOut({scope:"local"}).catch(()=>{});
+  sessionStorage.removeItem("dblossom_student_record_id");
+  loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");
+  if(notice){notice.className="notice";notice.textContent="Please sign in with your "+role+" account."}
+  return;
+ }
  loginView?.classList.add("hidden");dashboardView?.classList.remove("hidden");try{const qs=new URLSearchParams(location.search);if((role==="student"||role==="parent")&&qs.get("payment")==="verify"&&qs.get("reference")){const vr=await api("/api/paystack-verify?reference="+encodeURIComponent(qs.get("reference")));justUnlockedResult=!!vr.data?.verified;history.replaceState({},document.title,location.pathname);toast(vr.data?.verified?"Payment verified. Result unlocked.":"Payment is still being verified.","success")}if(role==="admin"){const check=await api("/api/dashboard-data");if(!["admin","super_admin"].includes(String(check.profile?.role)))throw Error("Administrator access is required.");await adminDashboard(check)}else if(role==="student")await studentDashboard();else if(role==="parent"){const{renderParentDashboard}=await import("./parent-dashboard.js?v=20261010-learning-materials-fix-1");await renderParentDashboard({api,getSession,esc,toast,setBusy,select,input,table,pill});if(justUnlockedResult){document.querySelector("#parent-view-results")?.scrollIntoView({behavior:"smooth",block:"start"})}}else await teacherDashboard()}catch(e){dashboardView.innerHTML='<div class="dashboard-shell"><div class="notice danger">'+esc(e.message)+'</div></div>'}}
 async function adminDashboardShellFallback(){
  const tabs=ADMIN_TABS.map((x,i)=>'<button class="admin-tab '+(i===0?"active":"")+'" data-tab="'+x[0]+'"><span>'+x[2]+'</span>'+x[1]+'</button>').join("");
@@ -354,3 +371,4 @@ async function adminSettings(panel){const r=await api("/api/dashboard-data");pan
 async function deleteRecord(table,id,refresh){if(!await confirmAction("Delete this record? This action cannot be undone.",{title:"Confirm deletion",confirmText:"Delete permanently",danger:true}))return;try{await adminPost({type:"delete",table,id});toast("Deleted successfully.","success");await refresh()}catch(e){toast(e.message,"error")}}
 
 if(loginForm)login();render();
+window.addEventListener("pageshow",event=>{if(event.persisted&&role!=="admin")render().catch(error=>console.error("Portal session recheck failed:",error))});
