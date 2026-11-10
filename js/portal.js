@@ -2,7 +2,7 @@ import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-lea
 import{confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-learning-materials-fix-1";
 const esc=value=>String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 let supabaseModulePromise;
-const supabaseModule=()=>supabaseModulePromise||(supabaseModulePromise=import("./supabase.js"));
+const supabaseModule=()=>supabaseModulePromise||(supabaseModulePromise=import("./supabase.js?v=20261110-session-guard-1"));
 const getSupabase=async()=> (await supabaseModule()).getSupabase();
 const getSession=async()=> (await supabaseModule()).getSession();
 const signOut=async()=> (await supabaseModule()).signOut();
