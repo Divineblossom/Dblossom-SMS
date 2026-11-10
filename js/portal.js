@@ -2,7 +2,7 @@ import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-lea
 import{confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-learning-materials-fix-1";
 const esc=value=>String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 let supabaseModulePromise;
-const supabaseModule=()=>supabaseModulePromise||(supabaseModulePromise=import("./supabase.js"));
+const supabaseModule=()=>supabaseModulePromise||(supabaseModulePromise=import("./supabase.js?v=20261110-session-guard-1"));
 const getSupabase=async()=> (await supabaseModule()).getSupabase();
 const getSession=async()=> (await supabaseModule()).getSession();
 const signOut=async()=> (await supabaseModule()).signOut();
@@ -72,7 +72,24 @@ async function render(){
  }
  const s=await getSession();
  if(!s){loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");return}
- loginView?.classList.add("hidden");dashboardView?.classList.remove("hidden");try{const qs=new URLSearchParams(location.search);if((role==="student"||role==="parent")&&qs.get("payment")==="verify"&&qs.get("reference")){const vr=await api("/api/paystack-verify?reference="+encodeURIComponent(qs.get("reference")));justUnlockedResult=!!vr.data?.verified;history.replaceState({},document.title,location.pathname);toast(vr.data?.verified?"Payment verified. Result unlocked.":"Payment is still being verified.","success")}if(role==="admin"){const check=await api("/api/dashboard-data");if(!["admin","super_admin"].includes(String(check.profile?.role)))throw Error("Administrator access is required.");await adminDashboard(check)}else if(role==="student")await studentDashboard();else if(role==="parent"){const{renderParentDashboard}=await import("./parent-dashboard.js?v=20261010-learning-materials-fix-1");await renderParentDashboard({api,getSession,esc,toast,setBusy,select,input,table,pill});if(justUnlockedResult){document.querySelector("#parent-view-results")?.scrollIntoView({behavior:"smooth",block:"start"})}}else await teacherDashboard()}catch(e){dashboardView.innerHTML='<div class="dashboard-shell"><div class="notice danger">'+esc(e.message)+'</div></div>'}}
+ // A stored session must belong to the portal the visitor actually opened.
+ const sb=await getSupabase();
+ const{data:authData,error:authError}=await sb.auth.getUser();
+ if(authError||!authData?.user){
+  await sb.auth.signOut({scope:"local"}).catch(()=>{});
+  sessionStorage.removeItem("dblossom_student_record_id");
+  loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");return;
+ }
+ const{data:accountProfile,error:profileError}=await sb.from("profiles").select("role").eq("id",authData.user.id).maybeSingle();
+ if(profileError)throw Error("We could not verify this portal account. Please try again.");
+ if(String(accountProfile?.role||"").toLowerCase()!==role){
+  await sb.auth.signOut({scope:"local"}).catch(()=>{});
+  sessionStorage.removeItem("dblossom_student_record_id");
+  loginView?.classList.remove("hidden");dashboardView?.classList.add("hidden");
+  if(notice){notice.className="notice";notice.textContent="Please sign in with your "+role+" account."}
+  return;
+ }
+ loginView?.classList.add("hidden");dashboardView?.classList.remove("hidden");try{const qs=new URLSearchParams(location.search);if((role==="student"||role==="parent")&&qs.get("payment")==="verify"&&qs.get("reference")){const vr=await api("/api/paystack-verify?reference="+encodeURIComponent(qs.get("reference")));justUnlockedResult=!!vr.data?.verified;history.replaceState({},document.title,location.pathname);toast(vr.data?.verified?"Payment verified. Result unlocked.":"Payment is still being verified.","success")}if(role==="admin"){const check=await api("/api/dashboard-data");if(!["admin","super_admin"].includes(String(check.profile?.role)))throw Error("Administrator access is required.");await adminDashboard(check)}else if(role==="student")await studentDashboard();else if(role==="parent"){const{renderParentDashboard}=await import("./parent-dashboard.js?v=20261110-logout-handler-1");await renderParentDashboard({api,getSession,esc,toast,setBusy,select,input,table,pill});if(justUnlockedResult){document.querySelector("#parent-view-results")?.scrollIntoView({behavior:"smooth",block:"start"})}}else await teacherDashboard()}catch(e){dashboardView.innerHTML='<div class="dashboard-shell"><div class="notice danger">'+esc(e.message)+'</div></div>'}}
 async function adminDashboardShellFallback(){
  const tabs=ADMIN_TABS.map((x,i)=>'<button class="admin-tab '+(i===0?"active":"")+'" data-tab="'+x[0]+'"><span>'+x[2]+'</span>'+x[1]+'</button>').join("");
  dashboardView.innerHTML='<header class="portal-dashboard-header"><div class="container"><div class="portal-head-row"><div class="admin-brand"><img src="/logo.jpg" alt="D&#39;Blossom Model Private Schools" style="width:48px;height:48px;object-fit:contain;border-radius:10px;background:#fff;padding:4px"><div><h1>D’Blossom Administrator</h1><p>School Management System</p></div></div><button id="logout" class="btn btn-outline-light">Logout</button></div></div></header><div class="dashboard-shell"><div class="admin-layout"><aside class="admin-sidebar">'+tabs+'</aside><div class="admin-content" id="admin-panel"><div class="dashboard-card"><div class="section-head"><div><p class="section-label">Administrator</p><h2>Dashboard Ready</h2></div></div><p class="muted">Your administrator credentials were verified successfully. Live school data can be loaded from each section when available.</p></div></div></div><nav class="admin-bottom-nav">'+tabs+'</nav></div>';
@@ -141,7 +158,7 @@ function report(rows,s){const total=rows.reduce((a,x)=>a+Number(x.total_score||0
 async function downloadPdf(){const el=document.querySelector("#report-card");if(!el)return;try{await load("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js","html2canvas");await load("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js","jspdf");const canvas=await window.html2canvas(el,{scale:2,backgroundColor:"#fff",useCORS:true}),{jsPDF}=window.jspdf,pdf=new jsPDF("p","mm","a4"),w=210,page=297,h=canvas.height*w/canvas.width;let left=h,y=0,img=canvas.toDataURL("image/png");pdf.addImage(img,"PNG",0,y,w,h);left-=page;while(left>0){y-=page;pdf.addPage();pdf.addImage(img,"PNG",0,y,w,h);left-=page}pdf.save("D-Blossom-Result.pdf")}catch(e){toast("PDF could not be generated. Please try again.","error")}}
 const load=(src,key)=>new Promise((ok,no)=>{if(window[key])return ok();const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)});
 
-async function teacherDashboard(){const{renderTeacherPortal}=await import("./teacher-portal.js?v=20261013-mobile-gallery-brand-2");await renderTeacherPortal(dashboardView,shell)}
+async function teacherDashboard(){const{renderTeacherPortal}=await import("./teacher-portal.js?v=20261110-teacher-profile-chat-2");await renderTeacherPortal(dashboardView,shell)}
 
 async function adminDashboard(){
  const existingPanel=document.querySelector("#admin-panel");
@@ -354,3 +371,4 @@ async function adminSettings(panel){const r=await api("/api/dashboard-data");pan
 async function deleteRecord(table,id,refresh){if(!await confirmAction("Delete this record? This action cannot be undone.",{title:"Confirm deletion",confirmText:"Delete permanently",danger:true}))return;try{await adminPost({type:"delete",table,id});toast("Deleted successfully.","success");await refresh()}catch(e){toast(e.message,"error")}}
 
 if(loginForm)login();render();
+window.addEventListener("pageshow",event=>{if(event.persisted&&role!=="admin")render().catch(error=>console.error("Portal session recheck failed:",error))});

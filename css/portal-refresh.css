@@ -402,3 +402,34 @@
 #admin-modal .admin-student-option[hidden],#admin-modal .admin-student-empty[hidden]{display:none!important}
 #admin-modal .admin-student-empty{margin:0;padding:12px;border:1px dashed #cbd5e1;border-radius:8px;text-align:center}
 #admin-modal .admin-student-selected{margin:0;padding:9px 10px;border-radius:8px;background:#eef5fb;color:#17324f;overflow-wrap:anywhere}
+
+
+/* Teacher portal: student passport thumbnails and WhatsApp-style chat history. */
+body.portal-page[data-role="teacher"] .teacher-student-cell{display:flex;align-items:center;gap:10px;min-width:180px}
+body.portal-page[data-role="teacher"] .teacher-student-avatar{width:42px;height:42px;flex:0 0 42px;border-radius:50%;object-fit:cover;background:#e8eef6;border:1px solid #d5deea}
+body.portal-page[data-role="teacher"] .teacher-student-avatar-fallback{display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:#64748b}
+body.portal-page[data-role="teacher"] .teacher-inbox-card{overflow:hidden}
+body.portal-page[data-role="teacher"] .teacher-inbox-count{white-space:nowrap;border-radius:999px;background:#e8f0ff;color:#17375e;padding:6px 10px;font-size:12px;font-weight:700}
+body.portal-page[data-role="teacher"] .teacher-inbox-search{display:grid;gap:6px;margin:12px 0 16px;color:#64748b;font-size:12px;font-weight:600}
+body.portal-page[data-role="teacher"] .teacher-inbox-search input{width:100%;min-height:42px;border:1px solid #d5deea;border-radius:10px;padding:9px 12px;font:inherit}
+body.portal-page[data-role="teacher"] .teacher-inbox-list{display:flex;flex-direction:column;gap:0}
+body.portal-page[data-role="teacher"] .teacher-inbox-row{display:flex;width:100%;align-items:center;gap:12px;padding:13px 8px;border:0;border-bottom:1px solid #e8edf4;background:#fff;color:#172033;text-align:left;cursor:pointer}
+body.portal-page[data-role="teacher"] .teacher-inbox-row:hover{background:#f7faff}
+body.portal-page[data-role="teacher"] .teacher-inbox-avatar{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e8f0ff;font-size:21px}
+body.portal-page[data-role="teacher"] .teacher-inbox-main{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+body.portal-page[data-role="teacher"] .teacher-inbox-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+body.portal-page[data-role="teacher"] .teacher-inbox-top strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.portal-page[data-role="teacher"] .teacher-inbox-top time{flex:0 0 auto;color:#64748b;font-size:11px}
+body.portal-page[data-role="teacher"] .teacher-inbox-child{color:#64748b;font-size:12px}
+body.portal-page[data-role="teacher"] .teacher-inbox-preview{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#475569;font-size:13px}
+body.portal-page[data-role="teacher"] .teacher-inbox-unread{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#15803d;color:#fff;font-size:11px;font-weight:700}
+@media(max-width:600px){body.portal-page[data-role="teacher"] .teacher-inbox-row{padding:12px 2px}body.portal-page[data-role="teacher"] .teacher-student-cell{min-width:160px}}
+
+
+/* Teacher dashboard introduction and staff identity details. */
+body.portal-page[data-role="teacher"] .teacher-welcome-card{border-left:4px solid #1d4ed8}
+body.portal-page[data-role="teacher"] .teacher-profile-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+body.portal-page[data-role="teacher"] .teacher-profile-details>div{display:flex;flex-direction:column;gap:5px;padding:13px;border:1px solid #e5eaf1;border-radius:12px;background:#f8fafc;min-width:0}
+body.portal-page[data-role="teacher"] .teacher-profile-details span{font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+body.portal-page[data-role="teacher"] .teacher-profile-details strong{font-size:14px;color:#172033;overflow-wrap:anywhere}
+@media(max-width:700px){body.portal-page[data-role="teacher"] .teacher-profile-details{grid-template-columns:repeat(2,minmax(0,1fr))}}
