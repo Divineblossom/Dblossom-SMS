@@ -12,7 +12,7 @@ const loginView=document.querySelector("#login-view"),dashboardView=document.que
 const TERMS=["First Term","Second Term","Third Term"];
 const ADMIN_TABS=[["students","Students","🎓"],["teachers","Teachers","👥"],["results","Results","📄"],["parents","Parents","👨‍👩‍👧"],["payments","Payments","💳"],["events","Events","📅"],["gallery","Gallery","🖼️"],["contact","Contact Enquiries","📩"],["admissions","Admissions","📝"],["messages","Parent Messages","✉️"],["subjects","Subjects","📚"],["advanced","School Management / Advanced","🛠️"],["settings","Settings","⚙️"]];
 const toast=(m,t="info")=>{const e=document.createElement("div");e.className="toast";e.dataset.type=t;e.textContent=m;document.body.append(e);setTimeout(()=>e.remove(),3200)};
-const api=async(path,options={})=>{const token=role==="admin"?await adminSession():(await getSession())?.access_token;if(role!=="admin"&&!token)throw Error("Your session has expired. Please sign in again.");const headers={...options.headers,"content-type":"application/json"};if(role!=="admin")headers.Authorization="Bearer "+token;if(role==="student"){const studentRecordId=sessionStorage.getItem("dblossom_student_record_id");if(studentRecordId)headers["x-student-record-id"]=studentRecordId;}const r=await fetch(path,{...options,headers,credentials:"same-origin"});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed.");return d};
+const api=async(path,options={})=>{const token=role==="admin"?await adminSession():(await getSession())?.access_token;if(role!=="admin"&&!token)throw Error("Your session has expired. Please sign in again.");const headers={...options.headers,"content-type":"application/json"};if(role!=="admin")headers.Authorization="Bearer "+token;if(role==="student"){const studentRecordId=sessionStorage.getItem("dblossom_student_record_id");if(studentRecordId)headers["x-student-record-id"]=studentRecordId;}const r=await fetch(path,{...options,headers,credentials:"same-origin",cache:"no-store"});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed.");return d};
 const setBusy=(b,on,label)=>{if(!b)return;b.disabled=on;if(on)b.dataset.old=b.textContent;b.textContent=on?label:(b.dataset.old||b.textContent)};
 const val=(form,n)=>String(new FormData(form).get(n)||"").trim();
 const grade=t=>t>=70?"A":t>=60?"B":t>=50?"C":t>=40?"D":"F";
@@ -39,7 +39,7 @@ async function login(){
     return;
    }
    const sb=await getSupabase();
-   const r=await fetch("/api/portal-login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({role,identifier})}),d=await r.json().catch(()=>({}));
+   const r=await fetch("/api/portal-login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({role,identifier}),cache:"no-store"}),d=await r.json().catch(()=>({}));
    if(!r.ok)throw Error(d.error||"Login failed. Please check your details and try again.");
    if(!d.login_email)throw Error(d.error||"Account not found.");
    const{error}=await sb.auth.signInWithPassword({email:d.login_email,password});if(error)throw Error("Incorrect password. Please try again.");
