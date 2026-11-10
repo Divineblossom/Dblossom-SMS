@@ -1,4 +1,4 @@
-import{getSession,esc,getSupabase}from"./supabase.js";
+import{getSession,esc,getSupabase}from"./supabase.js?v=20261110-session-guard-1";
 import{enableBrowserNotifications}from"./browser-notifications.js?v=20261010-final-audit-1";
 import{confirmAction,promptAction}from"./portal-dialogs.js?v=20261010-final-audit-1";
 const TERMS=["First Term","Second Term","Third Term"];
