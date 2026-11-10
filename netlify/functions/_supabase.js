@@ -11,7 +11,7 @@ async function userFrom(event){
   return error||!data.user?null:data.user;
  }
  const rawCookie=event.headers?.cookie||event.headers?.Cookie||"";
- const cookieMatch=String(rawCookie).match(/(?:^|;\\s*)dblossom_admin_session=([^;]+)/);
+ const cookieMatch=String(rawCookie).match(/(?:^|;\s*)dblossom_admin_session=([^;]+)/);
  const ah=event.headers?.["x-admin-session"]||event.headers?.["X-Admin-Session"]||"";
  const token=ah||(cookieMatch?decodeURIComponent(cookieMatch[1]):"");
  if(!token)return null;
