@@ -82,6 +82,11 @@ module.exports = async function handler(req, res) {
       if (value !== undefined && value !== null) res.setHeader(key, value);
     }
     res.statusCode = result?.statusCode || 200;
+    // Portal API responses contain user-specific records. Never allow browser,
+    // proxy, or CDN caches to reuse one account\u2019s dashboard for another.
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Vary", "Authorization, Cookie");
     if (!res.getHeader("Content-Type")) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
     }
