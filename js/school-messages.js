@@ -1,4 +1,4 @@
-import{getSupabase,getSession,signOut,esc}from"./supabase.js";
+import{getSupabase,getSession,signOut,esc}from"./supabase.js?v=20261110-session-guard-1";
 import{enableBrowserNotifications}from"./browser-notifications.js?v=20261009-deployment-repair-1";
 const $=s=>document.querySelector(s);
 const status=$("#sm-status"),workspace=$("#sm-workspace"),errorBox=$("#sm-error");
