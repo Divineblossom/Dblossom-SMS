@@ -424,3 +424,12 @@ body.portal-page[data-role="teacher"] .teacher-inbox-child{color:#64748b;font-si
 body.portal-page[data-role="teacher"] .teacher-inbox-preview{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#475569;font-size:13px}
 body.portal-page[data-role="teacher"] .teacher-inbox-unread{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#15803d;color:#fff;font-size:11px;font-weight:700}
 @media(max-width:600px){body.portal-page[data-role="teacher"] .teacher-inbox-row{padding:12px 2px}body.portal-page[data-role="teacher"] .teacher-student-cell{min-width:160px}}
+
+
+/* Teacher dashboard introduction and staff identity details. */
+body.portal-page[data-role="teacher"] .teacher-welcome-card{border-left:4px solid #1d4ed8}
+body.portal-page[data-role="teacher"] .teacher-profile-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+body.portal-page[data-role="teacher"] .teacher-profile-details>div{display:flex;flex-direction:column;gap:5px;padding:13px;border:1px solid #e5eaf1;border-radius:12px;background:#f8fafc;min-width:0}
+body.portal-page[data-role="teacher"] .teacher-profile-details span{font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+body.portal-page[data-role="teacher"] .teacher-profile-details strong{font-size:14px;color:#172033;overflow-wrap:anywhere}
+@media(max-width:700px){body.portal-page[data-role="teacher"] .teacher-profile-details{grid-template-columns:repeat(2,minmax(0,1fr))}}
