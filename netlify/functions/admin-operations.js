@@ -184,6 +184,9 @@ exports.handler = async event => {
 
     if(type==="student") {
       if(!clean(b.full_name)||!clean(b.admission_number)) return json(400,{error:"Full name and admission number are required for a student."});
+      const classId=clean(b.class_id)||null;
+      let department=clean(b.department)||null;
+      if(classId){const{data:studentClass,error:classError}=await db.from("classes").select("name").eq("id",classId).maybeSingle();if(classError)throw classError;if(!studentClass)return json(400,{error:"Choose a valid class."});const senior=/^SS[123]$/i.test(clean(studentClass.name));const allowedDepartments=["Science Department","Humanity Department","Business Department"];if(senior&&!allowedDepartments.includes(department))return json(400,{error:"Choose a department for SS1, SS2 or SS3."});if(!senior)department=null;}else department=null;
       // A new student's default password is the first word in their full name.
       // A password typed by the administrator always takes precedence.
       const firstName=(clean(b.full_name).split(/\s+/).filter(Boolean)[0]||"Student");
@@ -198,7 +201,7 @@ exports.handler = async event => {
         let passportPhotoPath=null;
         try { passportPhotoPath=await saveStudentPassport(db,profileId,String(b.passport_photo_data||""),String(b.passport_photo_mime||"")); }
         catch(photoError){await db.from("profiles").delete().eq("id",profileId);await db.auth.admin.deleteUser(profileId);throw photoError;}
-        const {data,error}=await db.from("students").insert({admission_number:clean(b.admission_number),full_name:clean(b.full_name),class_id:clean(b.class_id)||null,date_of_birth:b.date_of_birth||null,guardian_name:clean(b.guardian_name)||null,guardian_contact:clean(b.guardian_contact)||null,gender:clean(b.gender)||null,parent_email:clean(b.parent_email)||null,boarding_status:clean(b.boarding_status)||null,status:clean(b.status)||"active",profile_id:profileId,passport_photo_path:passportPhotoPath}).select().single();
+        const {data,error}=await db.from("students").insert({admission_number:clean(b.admission_number),full_name:clean(b.full_name),class_id:classId,department,date_of_birth:b.date_of_birth||null,guardian_name:clean(b.guardian_name)||null,guardian_contact:clean(b.guardian_contact)||null,gender:clean(b.gender)||null,parent_email:clean(b.parent_email)||null,boarding_status:clean(b.boarding_status)||null,status:clean(b.status)||"active",profile_id:profileId,passport_photo_path:passportPhotoPath}).select().single();
         if(error){if(passportPhotoPath)await db.storage.from("student-passports").remove([passportPhotoPath]);await db.auth.admin.deleteUser(profileId);throw error}
         await audit(db,user,"create","student",data.id,{admission_number:data.admission_number,passport_photo_added:!!passportPhotoPath});
         return json(201,{data});
@@ -216,7 +219,7 @@ exports.handler = async event => {
       const newPassportPath=await saveStudentPassport(db,profileId,String(b.passport_photo_data||""),String(b.passport_photo_mime||""));
       if(newPassportPath)passportPhotoPath=newPassportPath;
       else if(b.remove_passport_photo===true||b.remove_passport_photo==="true")passportPhotoPath=null;
-      const {data,error}=await db.from("students").update({admission_number:clean(b.admission_number),full_name:clean(b.full_name),class_id:clean(b.class_id)||null,date_of_birth:b.date_of_birth||null,guardian_name:clean(b.guardian_name)||null,guardian_contact:clean(b.guardian_contact)||null,gender:clean(b.gender)||null,parent_email:clean(b.parent_email)||null,boarding_status:clean(b.boarding_status)||null,status:clean(b.status)||"active",profile_id:profileId,passport_photo_path:passportPhotoPath}).eq("id",id).select().single();
+      const {data,error}=await db.from("students").update({admission_number:clean(b.admission_number),full_name:clean(b.full_name),class_id:classId,department,date_of_birth:b.date_of_birth||null,guardian_name:clean(b.guardian_name)||null,guardian_contact:clean(b.guardian_contact)||null,gender:clean(b.gender)||null,parent_email:clean(b.parent_email)||null,boarding_status:clean(b.boarding_status)||null,status:clean(b.status)||"active",profile_id:profileId,passport_photo_path:passportPhotoPath}).eq("id",id).select().single();
       if(error){if(newPassportPath)await db.storage.from("student-passports").remove([newPassportPath]);throw error;}
       if(old.passport_photo_path&&old.passport_photo_path!==passportPhotoPath)await db.storage.from("student-passports").remove([old.passport_photo_path]);
       if(profileId)await upsertProfile(db,profileId,data.full_name,"student");
